@@ -1,0 +1,7 @@
+This is the repository for third party code and libraries used in this project.
+
+third_party/mustache is the mustache.php libary
+
+third_party/startbootstrap-sb-admin-2-gh-pages
+Boostrap.js theme, providing the responsive layout for our UI
+Source: https://startbootstrap.com/template-overviews/sb-admin-2/
