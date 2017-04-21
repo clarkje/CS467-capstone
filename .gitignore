@@ -1,0 +1,4 @@
+.DS_STORE
+config/clienttmp/
+config/admintmp/
+configtmp/
