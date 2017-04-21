@@ -15,5 +15,8 @@ if($mysqli->connect_errno){
 require($_SERVER['DOCUMENT_ROOT'] . '/config/admin/mustache.php');
 $tpl = $mustache->loadTemplate('index');
 
-echo $tpl->render();
+$data['title'] = 'Project Phoenix - Admin';
+$data['page_title'] = 'Hello World - Now With Cool Layout';
+
+echo $tpl->render($data);
 ?>
