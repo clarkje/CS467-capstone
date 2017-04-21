@@ -12,8 +12,8 @@ if($mysqli->connect_errno){
 */
 
 // Setup the template engine
-require($_SERVER['DOCUMENT_ROOT'] . '/config/admin/mustache.php');
-$tpl = $mustache->loadTemplate('index');
+require('config/client/mustache.php');
+$tpl = $mustache->loadTemplate('helloWorld');
 
 echo $tpl->render();
 ?>
