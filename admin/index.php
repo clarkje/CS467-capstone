@@ -15,8 +15,15 @@ if($mysqli->connect_errno){
 require($_SERVER['DOCUMENT_ROOT'] . '/config/admin/mustache.php');
 $tpl = $mustache->loadTemplate('index');
 
+// Mocking the logged in state
+if( array_key_exists('logged_in',$_GET) && $_GET['logged_in'] == "true") {
+  $data['user_info'] = true;
+  $data['page_title'] = 'Overview';
+} else {
+  $data['page_title'] = 'Log In';
+}
+
 $data['title'] = 'Project Phoenix - Admin';
-$data['page_title'] = 'Hello World - Now With Cool Layout';
 
 echo $tpl->render($data);
 ?>

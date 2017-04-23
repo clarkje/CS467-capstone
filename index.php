@@ -15,5 +15,10 @@ if($mysqli->connect_errno){
 require('config/client/mustache.php');
 $tpl = $mustache->loadTemplate('helloWorld');
 
-echo $tpl->render();
+// Mocking the logged in state
+if($_GET['logged_in'] == true) {
+  $data['user_info'] = true;
+}
+
+echo $tpl->render($data);
 ?>
