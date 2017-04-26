@@ -1,0 +1,16 @@
+{
+  "require": {
+    "components/jquery": "3.2.*",
+    "doctrine/orm": "2.4.*",
+    "symfony/yaml": "2.*",
+    "twbs/bootstrap": "3.3.*",
+    "mustache/mustache": "2.*",
+    "benit/startbootstrap-sb-admin-2": "dev-master"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "5.*"
+  },
+  "autoload": {
+    "psr-0": {"": "src/"}
+  }
+}

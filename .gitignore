@@ -2,3 +2,4 @@
 config/clienttmp/
 config/admintmp/
 configtmp/
+vendor/
