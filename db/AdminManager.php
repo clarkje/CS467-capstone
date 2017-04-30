@@ -24,6 +24,13 @@ class AdminManager {
   }
 
   /**
+  * @return Array of Admins
+  */
+  public function loadAll() {
+    return $this->em->getRepository('Admin')->findAll();
+  }
+
+  /**
   * @pearam $email
   * @return Admin
   */
