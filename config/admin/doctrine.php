@@ -6,11 +6,10 @@
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
-$GLOBALS['docroot'] = "/Users/jeclark/OSU/phoenix";
+require_once(__DIR__ . "/../config.php");
+require_once(__DIR__ . "/../../vendor/autoload.php");
 
-// TODO: Get rid of it or move it to a dedicated paths config file or something..
-require_once $GLOBALS['docroot'] . "/vendor/autoload.php";
-
+// TODO: It probably makes sense to have this be a Singleton, but I'm not 100% sure it matters.
 class EntityManagerFactory
 {
 
@@ -35,4 +34,6 @@ class EntityManagerFactory
   }
 }
 
+$emf = new EntityManagerFactory();
+$entityManager = $emf->getEntityManager();
 ?>
