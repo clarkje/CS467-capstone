@@ -1,0 +1,43 @@
+<!-- admin_form begin -->
+<form role="form" method="POST" action="/admin/update_user.php">
+    <input type="hidden" name="id" value="{{id}}">
+
+    <div class="form-group">
+      <label>Email</label>
+      <input class="form-control" name="email" value="{{email}}">
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" class="form-control" name="password" placeholder="password">
+    </div>
+
+    {{#created}}
+    <div class="form-group">
+      <label>Created</label>
+      <p class="form-control-static">{{created}}</p>
+    </div>
+    {{/created}}
+
+    <div class="form-group">
+      <button type="button" class="btn btn-default" data-toggle="modal" data-target="#confirmModal">{{^id}}Add{{/id}}{{#id}}Update{{/id}} User</button>
+    </div>
+
+<!-- Modal Confirmation Dialog -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancel"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="cancelModalLabel">Are You Sure?</h4>
+      </div>
+      <div class="modal-body">
+        Press Delete to delete {{email}}.  Otherwise, click Cancel.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-danger">Delete</button>
+      </div>
+</form>
+
+<!-- admin_form end -->
