@@ -18,8 +18,8 @@ class AdminDoctrineTest extends TestCase
   */
   static protected $em = null;
 
-  private $testEmail1 = "testAdmin1@jeromie.com";
-  private $testEmail2 = "blerpblargs@jeromie.com";
+  private $testEmail1 = "___testAdmin1@jeromie.com";
+  private $testEmail2 = "___testAdmin2@jeromie.com";
 
   public static function setUpBeforeClass() {
     $emFactory = new EntityManagerFactory();
@@ -33,10 +33,6 @@ class AdminDoctrineTest extends TestCase
 
   protected function createEntityManager() {
     return self::$em;
-  }
-
-  protected function getDataSet() {
-    return $this->createFlatXmlDataSet($GLOBALS['docroot'] . '/db/dataset.xml');
   }
 
   public function testEmptyConstructor() {
