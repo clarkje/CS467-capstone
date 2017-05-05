@@ -1,10 +1,10 @@
 <?php
 ini_set('display_errors', 'On');
 
-require_once(__DIR__ . "/../config/admin/doctrine.php");
-require_once(__DIR__ . "/../vendor/autoload.php");
+require_once(__DIR__ . "/../config/admin/config.php");
 require_once(__DIR__ . "/../db/src/Admin.php");
 require_once(__DIR__ . "/../db/AdminManager.php");
+
 
 // Set up doctrine objects
 $emf = new EntityManagerFactory();

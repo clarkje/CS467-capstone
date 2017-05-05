@@ -40,6 +40,20 @@ class Admin {
   **/
   protected $created;
 
+
+  /**
+  * @var string
+  *
+  * @Column(name="resetHash", type="string", nullable=true)
+  */
+  protected $resetHash;
+
+  /**
+  * @var datetime
+  * @Column(name="resetTimestamp", type="datetime", nullable=true)
+  */
+  protected $resetTimestamp;
+
   /**
   * Sets the creation timestamp automatically, in the format MySQL DATEIME wants
   **/
@@ -97,6 +111,56 @@ class Admin {
   **/
   public function verifyPassword($password) {
     return password_verify($password, $this->password);
+  }
+
+  /**
+  * Sets a reset hash on the user account.
+  */
+  public function createResetHash() {
+
+    // Borrowed from random_compat usage example, here:
+    // https://github.com/paragonie/random_compat
+    try {
+      $string = random_bytes(32);
+    } catch (TypeError $e) {
+        // Well, it's an integer, so this IS unexpected.
+        die("An unexpected error has occurred");
+    } catch (Error $e) {
+        // This is also unexpected because 32 is a reasonable integer.
+        die("An unexpected error has occurred");
+    } catch (Exception $e) {
+        // If you get this message, the CSPRNG failed hard.
+        die("Could not generate a random string. Is our OS secure?");
+    }
+    $this->resetHash = bin2hex($string);
+    $this->resetTimestamp = new DateTime("now");
+  }
+
+  /**
+  * @param string
+  * Returns the password reset hash
+  */
+
+  public function getResetHash() {
+    return $this->resetHash;
+  }
+
+
+  public function validateResetHash($resetHash) {
+
+    $curTime = new DateTime("now");
+    $delta = $curTime->getTimestamp() - $this->resetTimestamp->getTimestamp();
+
+    // The reset token has not expired
+    // http://stackoverflow.com/questions/1519228/get-interval-seconds-between-two-datetime-in-php
+    if ($GLOBALS['password_reset_timeout'] >= $delta) {
+      // The reset token matches the expected value
+      if ($resetHash === $this->resetHash) {
+        return true;
+      }
+    }
+    // Otherwise, fail
+    return false;
   }
 }
 ?>
