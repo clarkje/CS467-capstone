@@ -15,8 +15,8 @@ $am = new AdminManager($em);
 require($_SERVER['DOCUMENT_ROOT'] . '/config/admin/mustache.php');
 $tpl = $mustache->loadTemplate('manage_admin');
 
-// Mocking the logged in state
-if( array_key_exists('logged_in',$_GET) && $_GET['logged_in'] == "true") {
+// If the user is logged in, proceed.  Otherwise, show the login screen.
+if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true") {
   $data['user_info'] = true;
   $data['page_title'] = 'Manage Administrators';
 } else {
