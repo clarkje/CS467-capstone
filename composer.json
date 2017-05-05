@@ -6,7 +6,8 @@
     "twbs/bootstrap": "3.3.*",
     "mustache/mustache": "2.*",
     "benit/startbootstrap-sb-admin-2": "dev-master",
-    "beberlei/DoctrineExtensions": "0.3"
+    "beberlei/DoctrineExtensions": "0.3",
+    "paragonie/random_compat": "2.0.10"
   },
   "require-dev": {
     "phpunit/phpunit": "5.*"
