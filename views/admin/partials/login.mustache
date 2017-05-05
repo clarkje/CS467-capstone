@@ -7,7 +7,8 @@
                    </div>
                    <div class="panel-body">
                       <!-- TODO: Provide a mechanism to redirect the user back to the starting page -->
-                       <form role="form" action="login.php" method="post">
+                       <form role="form" action="" method="post">
+                         <input type="hidden" name="action" value="login">
                            <fieldset>
                                <div class="form-group">
                                    <input class="form-control" placeholder="Email" name="email" type="email" autofocus>
@@ -21,7 +22,7 @@
                                    </label>
                                </div>
                                <!-- Change this to a button or input when using this as a form -->
-                               <a href="index.html" class="btn btn-lg btn-success btn-block">Login</a>
+                               <button type="submit" class="btn btn-lg btn-success btn-block">Login</button>
                            </fieldset>
                        </form>
                    </div>
