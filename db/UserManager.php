@@ -23,6 +23,13 @@ class UserManager {
   }
 
   /**
+  * @return Array of Users
+  */
+  public function loadAll() {
+    return $this->em->getRepository('User')->findAll();
+  }
+
+  /**
   * @pearam $email
   * @return User
   */

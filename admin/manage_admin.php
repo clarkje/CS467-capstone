@@ -74,7 +74,10 @@ foreach($loadedAdmins as $displayAdmin) {
   $i = $i + 1;
 }
 
+if($admins) {
+  $data['admins'] = $admins;
+}
+
 // Pass the resulting data into the template
-$data['admins'] = $admins;
 echo $tpl->render($data);
 ?>

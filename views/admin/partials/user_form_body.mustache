@@ -1,0 +1,128 @@
+<!-- admin_form begin -->
+{{#added}}
+<!-- Added a user successfully -->
+<div class="alert alert-success">
+  User Added Successfully
+</div>
+{{/added}}
+
+{{#updated}}
+<!-- Updated a user successfully -->
+<div class="alert alert-success">
+  User Updated Succssfully
+</div>
+{{/updated}}
+
+{{#deleted}}
+<!-- Deleted a user successfully -->
+<div class="alert alert-caution">
+  User Deleted Successfully
+</div>
+{{/deleted}}
+
+{{#error}}
+<!-- Something bad happened -->
+<div class="alert alert-danger">
+  {{error}}
+</div>
+{{/error}}
+
+<form role="form" method="POST" action="/admin/manage_user.php">
+  {{#user.id}}<input type="hidden" name="id" value="{{user.id}}">{{/user.id}}
+  <input type="hidden" name="action" value="{{#user.id}}update{{/user.id}}{{^user.id}}add{{/user.id}}">
+
+  <div class="form-group">
+    <label>First Name</label>
+    <input class="form-control" name="firstName" value="{{user.firstName}}">
+  </div>
+
+  <div class="form-group">
+    <label>Last Name</label>
+    <input class="form-control" name="lastName" value="{{user.lastName}}">
+  </div>
+
+  <div class="form-group">
+    <label>Email</label>
+    <input class="form-control" name="email" value="{{user.email}}">
+  </div>
+
+  <div class="form-group">
+    <label>{{#user.id}}Change {{/user.id}}Password</label>
+    <input type="password" class="form-control" name="password" placeholder="password">
+  </div>
+
+  {{#user.created}}
+  <div class="form-group">
+    <label>Created</label>
+    <p class="form-control-static">{{user.created}}</p>
+  </div>
+  {{/user.created}}
+
+  <div class="form-group">
+    <button type="submit" class="btn btn-default" >{{^user.id}}Add{{/user.id}}{{#user.id}}Update{{/user.id}} User</button>
+    {{#user.id}}<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmModal">Delete User</button>{{/user.id}}
+  </div>
+</form>
+
+<!-- Modal Confirmation Dialog -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancel"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="confirmModalLabel">Are You Sure?</h4>
+      </div>
+      <div class="modal-body">
+        Press Delete to delete {{user.email}}.  Otherwise, click Cancel.
+      </div>
+      <div class="modal-footer">
+        <form role="form" method="POST" action="/admin/manage_user.php">
+          {{#user.id}}<input type="hidden" name="id" value="{{user.id}}">{{/user.id}}
+          <input type="hidden" name="action" value="delete">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
+<h2>Users</h2>
+  <table class="table table-hover">
+      <thead>
+          <tr>
+              <th>#</th>
+              <th>ID</th>
+              <th>First</th>
+              <th>Last</th>
+              <th>Email</th>
+          </tr>
+      </thead>
+      <tbody>
+        {{#users}}
+          <tr>
+              <th scope=row>
+                <form role="form" method="POST" action="/admin/manage_user.php">
+                  <input type="hidden" name="id" value="{{id}}">
+                  <input type="hidden" name="action" value="update">
+                  <button type="submit">Manage</button>
+                </form>
+              </th>
+              <td>{{id}}</td>
+              <td>{{firstName}}</td>
+              <td>{{lastName}}</td>
+              <td>{{email}}</td>
+          </tr>
+        {{/users}}
+        {{^users}}
+        <tr>
+          <th scope=row>
+            <td colspan=5> No users found.  You should probably make some. </td>
+          </th>
+        </tr>
+        {{/users}}
+      </tbody>
+  </table>
+
+<!-- admin_form end -->

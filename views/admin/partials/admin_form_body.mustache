@@ -30,7 +30,7 @@
     </div>
 
     <div class="form-group">
-      <label>Password</label>
+      <label>{{#user.id}}Change {{/user.id}}Password</label>
       <input type="password" class="form-control" name="password" placeholder="password">
     </div>
 
@@ -58,8 +58,12 @@
         Press Delete to delete {{email}}.  Otherwise, click Cancel.
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-danger">Delete</button>
+        <form role="form" method="POST" action="/admin/manage_admin.php">
+          {{#admin.id}}<input type="hidden" name="id" value="{{admin.id}}">{{/admin.id}}
+          <input type="hidden" name="action" value="delete">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
       </div>
     </div>
   </div>
@@ -88,6 +92,14 @@
               <td>{{id}}</td>
               <td>{{email}}</td>
           </tr>
+        {{/admins}}
+
+        {{^admins}}
+        <tr>
+          <th scope=row>
+            <td colspan=3> No admins found.  You should probably make some. </td>
+          </th>
+        </tr>
         {{/admins}}
       </tbody>
   </table>

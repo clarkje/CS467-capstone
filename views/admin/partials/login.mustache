@@ -5,6 +5,11 @@
                    <div class="panel-heading">
                        <h3 class="panel-title">Log In</h3>
                    </div>
+                   {{#error}}
+                   <div class="alert-danger">
+                     {{error}}
+                   </div>
+                   {{/error}}
                    <div class="panel-body">
                       <!-- TODO: Provide a mechanism to redirect the user back to the starting page -->
                        <form role="form" action="" method="post">
