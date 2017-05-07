@@ -1,8 +1,6 @@
 <?php
 
 require_once(__DIR__ . "/src/Admin.php");
-require_once(__DIR__ . "/../config/admin/doctrine.php");
-
 
 class AdminManager {
 

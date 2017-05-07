@@ -54,7 +54,7 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == "logout") {
   }
 }
 
-handleLogin();
+$data['error'] = handleLogin();
 
 // borrowed from the example here:
 // http://php.net/manual/en/function.session-destroy.php
@@ -94,15 +94,18 @@ function handleLogin() {
     // TODO: Not sure that I care, but email should probably be unique for admins.
     $admins = $am->loadByEmail($_POST['email']);
 
-    if ($admins) {
+    if (sizeof($admins) > 0) {
       $admin = $admins[0];
       if ($admin->verifyPassword($_POST['password'])) {
         $_SESSION['logged_in'] = true;
       } else {
-        $data['error'] = "Authentication Error: The supplied username and password did not match.";
+        return "Authentication Error: The supplied username and password did not match.";
       }
+    } else {
+      return "Authentication Error: The supplied username and password did not match.";
     }
   }
+  return null;
 }
 
 

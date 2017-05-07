@@ -6,10 +6,6 @@
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
-require_once(__DIR__ . "/../config.php");
-require_once(__DIR__ . "/../../vendor/autoload.php");
-
-// TODO: It probably makes sense to have this be a Singleton, but I'm not 100% sure it matters.
 class EntityManagerFactory
 {
 

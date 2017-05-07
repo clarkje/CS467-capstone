@@ -1,12 +1,9 @@
 <?php
-// Path to the document root
-$GLOBALS['DOCUMENT_ROOT'] = "/Users/jeclark/OSU/phoenix";
-
-// A password reset has is only valid for one hour
-$GLOBALS['password_reset_timeout'] = 3600;
-
 // Just bundle up all the common required libraries to bootstrap the admin UI pages
 // so that I'm not adding a bunch of requires in each of the individual pages
+
+// Include common settings
+require_once(__DIR__ . "/../config.php");
 
 // Composer dependency auto-loader
 require_once($GLOBALS['DOCUMENT_ROOT'] . "/vendor/autoload.php");
