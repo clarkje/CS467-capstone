@@ -1,13 +1,13 @@
 <?php
 
 // Setup the template engine
-require_once($_SERVER['DOCUMENT_ROOT'] . '/third_party/mustache/src/Mustache/Autoloader.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/vendor/mustache/mustache/src/Mustache/Autoloader.php');
 Mustache_Autoloader::register();
 
 $mustache = new Mustache_Engine(array(
     'template_class_prefix' => 'templates',
     'cache' => dirname(__FILE__).'tmp/cache',
-    'cache_file_mode' => 0666, // Please, configure your umask instead of doing this :)
+    'cache_file_mode' => 0666,
     'cache_lambda_templates' => true,
     'loader' => new Mustache_Loader_FilesystemLoader($_SERVER['DOCUMENT_ROOT'] . '/views/client'),
     'partials_loader' => new Mustache_Loader_FilesystemLoader($_SERVER['DOCUMENT_ROOT'] . '/views/client/partials'),

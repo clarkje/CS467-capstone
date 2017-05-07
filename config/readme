@@ -1,6 +1,5 @@
 Files used to configure the behavior of our website.
 
-** IMPORTANT  ** 
+** IMPORTANT  **
 DO NOT check important secrets and credentials like AWS tokens into GitHub.  We
 ll need to manage those out of band.
-
