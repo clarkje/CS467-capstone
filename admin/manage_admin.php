@@ -44,6 +44,8 @@ if(isset($_POST['action'])) {
       $data['admin']['created'] = $admin->getCreated()->format('m-d-Y H:i:s');
     break;
     case "update":
+
+    //TODO: Update doesn't actually save anything
       try {
         // Load the provided admin from the database
         $admin = $am->load($_POST['id']);

@@ -145,9 +145,12 @@ class Admin {
     return $this->resetHash;
   }
 
-
+  // TODO: Consider implementing an attempt counter and timeout
+  // If user gets <n> failed password hash validation attempts in a timeout period,
+  // lock the accout out for an extended period of time
   public function validateResetHash($resetHash) {
-
+    
+    date_default_timezone_set('America/Los_Angeles');
     $curTime = new DateTime("now");
     $delta = $curTime->getTimestamp() - $this->resetTimestamp->getTimestamp();
 
