@@ -21,5 +21,4 @@ $GLOBALS['password_reset_timeout'] = 3600;
 // The hostname of our application
 $GLOBALS['hostname'] = "localhost:8888";
 
-
 ?>
