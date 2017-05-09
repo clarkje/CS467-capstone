@@ -6,6 +6,7 @@
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
+// TODO: It probably makes sense to have this be a Singleton, but I'm not 100% sure it matters.
 class EntityManagerFactory
 {
 
@@ -17,6 +18,7 @@ class EntityManagerFactory
     $isDevMode = true;
 
     // Database configuration pg_parameter_status
+    // TODO: Setup different accounts for client and admin on the database w/ appropriate perms.
     $connectionParams = array(
       'url' => 'mysql://root:root@127.0.0.1:8889/phoenix_admin'
     );

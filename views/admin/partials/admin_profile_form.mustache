@@ -1,0 +1,35 @@
+<!-- admin_profile begin -->
+{{#updated}}
+<!-- Updated a user successfully -->
+<div class="alert alert-success">
+  Profile Updated Succssfully
+</div>
+{{/updated}}
+
+{{#error}}
+<!-- Something bad happened -->
+<div class="alert alert-danger">
+  {{error}}
+</div>
+{{/error}}
+
+<form role="form" method="POST" action="/admin/admin_profile.php">
+    {{#admin.id}}<input type="hidden" name="id" value="{{admin.id}}">{{/admin.id}}
+    <input type="hidden" name="action" value="update profile">
+
+    <div class="form-group">
+      <label>Email</label>
+      <input class="form-control" name="email" value="{{admin.email}}">
+    </div>
+
+    <div class="form-group">
+      <label>Change Password</label>
+      <input type="password" class="form-control" name="password" placeholder="password">
+    </div>
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-default" >Update Profile</button>
+    </div>
+  </form>
+
+<!-- admin_profile end -->

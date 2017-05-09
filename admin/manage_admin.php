@@ -1,10 +1,10 @@
 <?php
 ini_set('display_errors', 'On');
 
-require_once(__DIR__ . "/../config/admin/doctrine.php");
-require_once(__DIR__ . "/../vendor/autoload.php");
+require_once(__DIR__ . "/../config/admin/config.php");
 require_once(__DIR__ . "/../db/src/Admin.php");
 require_once(__DIR__ . "/../db/AdminManager.php");
+
 
 // Set up doctrine objects
 $emf = new EntityManagerFactory();
@@ -15,8 +15,8 @@ $am = new AdminManager($em);
 require($_SERVER['DOCUMENT_ROOT'] . '/config/admin/mustache.php');
 $tpl = $mustache->loadTemplate('manage_admin');
 
-// Mocking the logged in state
-if( array_key_exists('logged_in',$_GET) && $_GET['logged_in'] == "true") {
+// If the user is logged in, proceed.  Otherwise, show the login screen.
+if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true") {
   $data['user_info'] = true;
   $data['page_title'] = 'Manage Administrators';
 } else {
@@ -44,6 +44,8 @@ if(isset($_POST['action'])) {
       $data['admin']['created'] = $admin->getCreated()->format('m-d-Y H:i:s');
     break;
     case "update":
+
+    //TODO: Update doesn't actually save anything
       try {
         // Load the provided admin from the database
         $admin = $am->load($_POST['id']);
@@ -74,7 +76,10 @@ foreach($loadedAdmins as $displayAdmin) {
   $i = $i + 1;
 }
 
+if($admins) {
+  $data['admins'] = $admins;
+}
+
 // Pass the resulting data into the template
-$data['admins'] = $admins;
 echo $tpl->render($data);
 ?>

@@ -1,7 +1,5 @@
 <?php
-
 require_once(__DIR__ . "/src/User.php");
-require_once(__DIR__ . "/../config/admin/doctrine.php");
 
 class UserManager {
 
@@ -20,6 +18,13 @@ class UserManager {
   */
   public function load($userId) {
     return $this->em->find('User', $userId);
+  }
+
+  /**
+  * @return Array of Users
+  */
+  public function loadAll() {
+    return $this->em->getRepository('User')->findAll();
   }
 
   /**
