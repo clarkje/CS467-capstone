@@ -1,7 +1,9 @@
 <?php
 
 // Setup the template engine
-require_once($_SERVER['DOCUMENT_ROOT'] . '/third_party/mustache/src/Mustache/Autoloader.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/mustache.php-2.11.1/src/Mustache/Autoloader.php');
+//require_once('Users/stupidalphabet/Desktop/Classes/CS467-Capstone/phoenix/mustache.php-2.11.1/src/Mustache/Autoloader.php');
+//require ' Users/stupidalphabet/Desktop/Classes/CS467-Capstone/Phoenix/mustache.php-2.11.1/src/Mustache/Autoloader.php';
 Mustache_Autoloader::register();
 
 $mustache = new Mustache_Engine(array(
