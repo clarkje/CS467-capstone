@@ -3,7 +3,6 @@ ini_set('display_errors', 'On');
 
 // Setup the template engine
 require(__DIR__ . "/../config/admin/config.php");
-
 $tpl = $mustache->loadTemplate('index');
 
 // If the user is logged in, proceed.  Otherwise, show the login screen.

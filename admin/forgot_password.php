@@ -60,11 +60,15 @@ if(isset($_REQUEST['action'])) {
       // TODO: Move email content to a mustache template and build the message body
       // vs. having it embedded in the business logic.
 
+      $resetLink = "https://"
+        . $GLOBALS['hostname']
+        . "/admin/forgot_password.php?action=doReset&token="
+        . $admin->getResetHash();
+
       $to = $admin->getEmail();
       $subject = "Password Reset for Project Phoenix";
       $message = "An attempt has been made to reset your password." . "\r\n"
-                . "To reset your password, click this link:" . "\r\n"
-                . "https://" . $GLOBALS['hostname'] . "/admin/forgot_password.php?action=doReset&token="
+                . "To reset your password, click this link:" . $resetLink . "\r\n"
                 . $admin->getResetHash()
                 . "&email=" . $admin->getEmail() . "\r\n"
                 . "This reset link will expire in "
@@ -75,7 +79,7 @@ if(isset($_REQUEST['action'])) {
 
       mail($to, $subject, $message, $headers);
 
-      echo("<p>$message</p>");
+      $data['resetLink'] = $resetLink;
 
     break;
     case "doReset":
