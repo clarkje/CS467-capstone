@@ -40,7 +40,9 @@ if(isset($_POST['action'])) {
       }
       // Populate the data element for the template engine
       $data['admin']['id'] = $admin->getId();
-      $data['email']['id'] = $admin->getEmail();
+      $data['admin']['email'] = $admin->getEmail();
+      // Show the successful update message in the UI
+      $data['updated'] = true;
     break;
   }
 }
