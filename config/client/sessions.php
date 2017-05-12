@@ -113,7 +113,10 @@ function handleLogin() {
     } else {
       return "Authentication Error: The supplied username and password did not match.";
     }
+    // Store our user object in the session
+    $_SESSION['id'] = $user->getId();
+    $_SESSION['email'] = $user->getEmail();
   }
-  return;
+  return null;
 }
 ?>

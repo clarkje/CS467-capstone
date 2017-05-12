@@ -107,7 +107,7 @@ function handleLogin() {
     // Store our user object in the session
     $_SESSION['id'] = $admin->getId();
     $_SESSION['email'] = $admin->getEmail();
-    return null;
   }
+  return null;
 }
 ?>
