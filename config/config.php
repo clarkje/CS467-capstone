@@ -21,5 +21,9 @@ $GLOBALS['password_reset_timeout'] = 3600;
 // The hostname of our application
 $GLOBALS['hostname'] = "localhost:8888";
 
+// Path to where certificates get stored
+$GLOBALS['CERT_PATH'] = "/static/cert/";
 
+// Path to where signatures get stored
+$GLOBALS['SIG_PATH'] = "/static/sig/";
 ?>
