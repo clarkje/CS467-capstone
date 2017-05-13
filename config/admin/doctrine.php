@@ -6,6 +6,8 @@
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
+require_once(__DIR__ . "/../config.php");
+
 class EntityManagerFactory
 {
 
@@ -21,7 +23,7 @@ class EntityManagerFactory
       'url' => 'mysql://root:root@127.0.0.1:8889/phoenix_admin'
     );
 
-    $config = Setup::createAnnotationMetadataConfiguration(array($GLOBALS['docroot'] . "/db/src"), $isDevMode);
+    $config = Setup::createAnnotationMetadataConfiguration(array($GLOBALS['DOCUMENT_ROOT'] . "/db/src"), $isDevMode);
     $this->entityManager = EntityManager::create($connectionParams, $config);
   }
 
