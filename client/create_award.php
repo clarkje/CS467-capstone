@@ -67,13 +67,13 @@ if(isset($_POST['action'])){
 			$selected = $POST['awardTemplates'];
 			switch($_POST['awardTemplates']){
 				case 'outstanding':
-					$data['image'] = 'outstanding.png';
+					$data['image'] = 'outstanding_sample.png';
 					break;
 				case 'winner':
-					$data['image'] = 'winner.png';
+					$data['image'] = 'winner_sample.png';
 					break;
 				case 'congratulations':
-					$data['image'] = 'congratulations.png';
+					$data['image'] = 'congratulations_sample.png';
 					break;
 			}
 	
