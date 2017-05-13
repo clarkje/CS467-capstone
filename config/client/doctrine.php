@@ -2,9 +2,10 @@
 
 // Based on Doctrine tutorial, here:
 // http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/configuration.html
-
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
+
+require_once(__DIR__ . "/../config.php");
 
 // TODO: It probably makes sense to have this be a Singleton, but I'm not 100% sure it matters.
 class EntityManagerFactory

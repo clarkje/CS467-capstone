@@ -2,7 +2,6 @@
 
 // Based on Doctrine tutorial, here:
 // http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/configuration.html
-
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 

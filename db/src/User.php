@@ -1,8 +1,10 @@
 <?php
 use Doctrine\ORM\Mapping as ORM;
 
+// TODO: Refactor to eliminate redundant code between Admin/User
+
 /**
-* @Table(name="user")
+* @Table(name="user", uniqueConstraints={@UniqueConstraint(name="email_idx",columns={"email"})})
 * @Entity
 **/
 class User {
@@ -40,7 +42,7 @@ class User {
   /**
   * @var string
   *
-  * @Column(name="signature_path", type="string")
+  * @Column(name="signature_path", type="string", nullable=true)
   **/
   protected $signaturePath;
 
@@ -66,15 +68,26 @@ class User {
   protected $addresses;
 
   /**
+  * @var string
+  *
+  * @Column(name="resetHash", type="string", nullable=true)
+  */
+  protected $resetHash;
+
+  /**
+  * @var datetime
+  * @Column(name="resetTimestamp", type="datetime", nullable=true)
+  */
+  protected $resetTimestamp;
+
+  /**
   * Sets the creation timestamp automatically, in the format MySQL DATEIME wants
   **/
-
   // TODO: Define the signature path at construction
   public function __construct() {
     // Set the default timezone for our application
     date_default_timezone_set('America/Los_Angeles');
     $this->created = new DateTime("now");
-    $this->signaturePath = "/dev/null";
   }
 
   /**
@@ -159,7 +172,16 @@ class User {
   * @return null
   **/
   public function setPassword($password) {
-    $this->password = password_hash($password, PASSWORD_DEFAULT);
+
+    // We don't want to store a hash of null if the user supplies a null password
+    // Just set it as null and let the database object
+    // TODO: More elegant code would probably throw an exception
+
+    if(!$password) {
+      $this->password = null;
+    } else {
+      $this->password = password_hash($password, PASSWORD_DEFAULT);
+    }
   }
 
   /**
@@ -169,6 +191,122 @@ class User {
   **/
   public function verifyPassword($password) {
     return password_verify($password, $this->password);
+  }
+
+  /**
+  * Sets a reset hash on the user account.
+  */
+  public function createResetHash() {
+
+    // Borrowed from random_compat usage example, here:
+    // https://github.com/paragonie/random_compat
+    try {
+      $string = random_bytes(32);
+    } catch (TypeError $e) {
+        // Well, it's an integer, so this IS unexpected.
+        die("An unexpected error has occurred");
+    } catch (Error $e) {
+        // This is also unexpected because 32 is a reasonable integer.
+        die("An unexpected error has occurred");
+    } catch (Exception $e) {
+        // If you get this message, the CSPRNG failed hard.
+        die("Could not generate a random string. Is our OS secure?");
+    }
+    $this->resetHash = bin2hex($string);
+    $this->resetTimestamp = new DateTime("now");
+  }
+
+  /**
+  * @param string
+  * Returns the password reset hash
+  */
+
+  public function getResetHash() {
+    return $this->resetHash;
+  }
+
+  // TODO: Consider implementing an attempt counter and timeout
+  // If user gets <n> failed password hash validation attempts in a timeout period,
+  // lock the accout out for an extended period of time
+  public function validateResetHash($resetHash) {
+
+    date_default_timezone_set('America/Los_Angeles');
+    $curTime = new DateTime("now");
+    $delta = $curTime->getTimestamp() - $this->resetTimestamp->getTimestamp();
+
+    // The reset token has not expired
+    // http://stackoverflow.com/questions/1519228/get-interval-seconds-between-two-datetime-in-php
+    if ($GLOBALS['password_reset_timeout'] >= $delta) {
+      // The reset token matches the expected value
+      if ($resetHash === $this->resetHash) {
+        return true;
+      }
+    }
+    // Otherwise, fail
+    return false;
+  }
+
+  /**
+  * @return string
+  * Generates a random path to store a signature
+  */
+
+  private function createSignaturePath() {
+
+    // Borrowed from random_compat usage example, here:
+    // https://github.com/paragonie/random_compat
+    try {
+      $string = random_bytes(16);
+    } catch (TypeError $e) {
+        // Well, it's an integer, so this IS unexpected.
+        die("An unexpected error has occurred");
+    } catch (Error $e) {
+        // This is also unexpected because 32 is a reasonable integer.
+        die("An unexpected error has occurred");
+    } catch (Exception $e) {
+        // If you get this message, the CSPRNG failed hard.
+        die("Could not generate a random string. Is our OS secure?");
+    }
+
+    // We're going to build a random filename and path for the user's signature
+    // to prevent a malicious user from planting files predictably on the filesystem
+    $filename = bin2hex($string) . ".jpg";
+    $basePath = $GLOBALS['SIG_PATH'];
+
+    // Since it's possible to exhaust the number of files in a single directory,
+    // we'll partition the space by the first three letters of the hash, which is
+    // hex, so we get 4096 directory entries.
+
+    // Assuming a reasonably random distribution, this should let us scale pretty far
+    $filePath = "/" . substr($filename, 0, 3) . "/";
+
+    if(!is_dir($filePath)) {
+      if(!mkdir($filePath, 0777, true)) {
+        return null;
+      }
+    }
+
+    $this->signaturePath = $basePath + $filePath + $filename;
+    return $this->signaturePath;
+  }
+
+  /**
+  * @return boolean
+  * Adds a signature to the user account
+  */
+  public function setSignature($uploadFile) {
+
+    // Check to see if the signature file is valid
+
+    // Create a location to store it
+    if($this->createSignaturePath()) {
+
+    } else {
+      // Creating the location failed
+    }
+
+    // Move the specified file from the temporary location to the final location
+    return move_uploaded_file($uploadFile, $this->getSignaturePath());
   }
 }
 ?>
