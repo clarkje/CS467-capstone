@@ -151,12 +151,12 @@ class User {
     if (empty($this->signaturePath)) {
       return null;
     }
-    
+
     $basePath = "http";
     if(!empty($_SERVER['HTTPS'])) {
       $basePath .= "s";
     }
-    $basePath .= "://" . $GLOBALS['STATIC_HOST'] . $GLOBALS['SIG_PATH'];
+    $basePath .= "://" . $GLOBALS['STATIC_HOST'];
 
     return $basePath . $this->signaturePath;
 
