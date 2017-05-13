@@ -156,7 +156,7 @@ class User {
     if(!empty($_SERVER['HTTPS'])) {
       $basePath .= "s";
     }
-    $basePath .= "://" . $GLOBALS['STATIC_HOST'];
+    $basePath .= "://" . $GLOBALS['STATIC_HOST'] . $GLOBALS['SIG_PATH'];
 
     return $basePath . $this->signaturePath;
 
@@ -309,13 +309,15 @@ class User {
       $dir = $basePath . $filePath;
       $dirMode = 0777;                // Make the directory writab
 
+      var_dump($dir);
+
       if(!mkdir($dir, $dirMode, true)) {
         return null;
       }
       chmod($dir, $dirMode);
     }
 
-    $this->signaturePath = $GLOBALS['SIG_PATH'] . $filePath . $filename;
+    $this->signaturePath = $filePath . $filename;
     return $this->signaturePath;
   }
 
@@ -337,8 +339,8 @@ class User {
     }
 
     // Move the specified file from the temporary location to the final location
-   if(move_uploaded_file($uploadedFile, $GLOBALS['STATIC_ROOT'] . $this->getSignaturePath())) {
-     chmod($GLOBALS['STATIC_ROOT'] . $this->getSignaturePath(), 0777);
+   if(move_uploaded_file($uploadedFile, $GLOBALS['STATIC_ROOT'] . $GLOBALS['SIG_PATH'] . $this->getSignaturePath())) {
+     chmod($GLOBALS['STATIC_ROOT'] . $GLOBALS['SIG_PATH'] . $this->getSignaturePath(), 0777);
      return true;
    }
    return false;
