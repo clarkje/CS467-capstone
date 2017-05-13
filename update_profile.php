@@ -57,7 +57,15 @@ if(isset($_POST['action'])) {
 
       $um->store($user);
       if($user->getSignaturePath()) {
-        $data['signaturePath'] = $user->getSignaturePath();
+
+        $basePath = "http";
+        if(!empty($_SERVER['HTTPS'])) {
+          $basePath .= "s";
+        }
+        $basePath = "://" . $GLOBALS['STATIC_HOST'] . $GLOBALS['STATIC_ROOT'];
+
+
+        $data['signaturePath'] = $basePath . $user->getSignaturePath();
       }
       // Show the successful update message in the UI
       $data['updated'] = true;
