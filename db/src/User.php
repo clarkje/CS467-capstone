@@ -309,8 +309,6 @@ class User {
       $dir = $basePath . $filePath;
       $dirMode = 0777;                // Make the directory writab
 
-      var_dump($dir);
-
       if(!mkdir($dir, $dirMode, true)) {
         return null;
       }
