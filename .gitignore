@@ -1,6 +1,7 @@
 .DS_STORE
 config/clienttmp/
 config/admintmp/
+config/config.php
 configtmp/
 vendor/
 composer.lock
