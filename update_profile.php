@@ -36,8 +36,8 @@ $data['id'] = $_SESSION['id'];
 $data['email'] = $_SESSION['email'];
 $data['firstName'] = $user->getFirstName();
 $data['lastName'] = $user->getLastName();
-if($user->getSignaturePath()) {
-  $data['signaturePath'] = $user->getSignaturePath();
+if($user->getSignatureURL()) {
+  $data['signatureURL'] = $user->getSignatureURL();
 }
 
 // Process any form input
@@ -56,16 +56,8 @@ if(isset($_POST['action'])) {
       $user->setEmail($_POST['email']);
 
       $um->store($user);
-      if($user->getSignaturePath()) {
-
-        $basePath = "http";
-        if(!empty($_SERVER['HTTPS'])) {
-          $basePath .= "s";
-        }
-        $basePath .= "://" . $GLOBALS['STATIC_HOST'] . $GLOBALS['SIG_PATH'];
-
-
-        $data['signaturePath'] = $basePath . $user->getSignaturePath();
+      if($user->getSignatureURL()) {
+        $data['signatureURL'] = $user->getSignatureURL();
       }
       // Show the successful update message in the UI
       $data['updated'] = true;

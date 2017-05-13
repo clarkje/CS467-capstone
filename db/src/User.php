@@ -142,6 +142,28 @@ class User {
   }
 
   /**
+  * @return string
+  *
+  * Provides the full URL to the signature image
+  **/
+  public function getSignatureURL() {
+
+    if (empty($this->signaturePath)) {
+      return null;
+    }
+    
+    $basePath = "http";
+    if(!empty($_SERVER['HTTPS'])) {
+      $basePath .= "s";
+    }
+    $basePath .= "://" . $GLOBALS['STATIC_HOST'] . $GLOBALS['SIG_PATH'];
+
+    return $basePath . $this->signaturePath;
+
+  }
+
+
+  /**
   * @param string
   * @return null
   **/
