@@ -62,7 +62,7 @@ if(isset($_POST['action'])) {
         if(!empty($_SERVER['HTTPS'])) {
           $basePath .= "s";
         }
-        $basePath .= "://" . $GLOBALS['STATIC_HOST'] . $GLOBALS['STATIC_ROOT'];
+        $basePath .= "://" . $GLOBALS['STATIC_HOST'];
 
 
         $data['signaturePath'] = $basePath . $user->getSignaturePath();
