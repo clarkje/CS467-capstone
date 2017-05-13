@@ -271,7 +271,7 @@ class User {
     // We're going to build a random filename and path for the user's signature
     // to prevent a malicious user from planting files predictably on the filesystem
     $filename = bin2hex($string) . ".jpg";
-    $basePath = $GLOBALS['DOCUMENT_ROOT'] . $GLOBALS['SIG_PATH'];
+    $basePath = $GLOBALS['STATIC_ROOT'] . $GLOBALS['SIG_PATH'];
 
     // Since it's possible to exhaust the number of files in a single directory,
     // we'll partition the space by the first three letters of the hash, which is
@@ -310,7 +310,7 @@ class User {
       if($this->createSignaturePath()) {
 
       } else {
-        die("Well, that didn't work");
+        die("Error: Could not write the uploaded file.");
       }
     }
 
