@@ -15,7 +15,7 @@
 
 <form role="form" method="POST" action="/update_profile.php" enctype="multipart/form-data">
     {{#id}}<input type="hidden" name="id" value="{{id}}">{{/id}}
-    <input type="hidden" name="MAX_FILE_SIZE" value="128000">
+    <input type="hidden" name="MAX_FILE_SIZE" value="512000">
     <input type="hidden" name="action" value="update">
 
     <div class="form-group">
@@ -41,7 +41,7 @@
     <div class="form-group">
       <label>Add Signature File</label>
       <input type="file" class="form-control" name="signatureFile">
-      <p class="help-block">Example block-level help text here.</p>
+      <p class="help-block">Max Size 512K</p>
     </div>
 
     {{#signaturePath}}

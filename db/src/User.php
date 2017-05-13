@@ -315,7 +315,11 @@ class User {
     }
 
     // Move the specified file from the temporary location to the final location
-    return move_uploaded_file($uploadedFile, $GLOBALS['STATIC_ROOT'] . $this->getSignaturePath());
+   if(move_uploaded_file($uploadedFile, $GLOBALS['STATIC_ROOT'] . $this->getSignaturePath())) {
+     chmod($GLOBALS['STATIC_ROOT'] . $this->getSignaturePath(), 0777);
+     return true;
+   }
+   return false;
   }
 }
 ?>
