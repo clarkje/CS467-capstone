@@ -5,3 +5,4 @@ configtmp/
 vendor/
 composer.lock
 .imdone
+static/

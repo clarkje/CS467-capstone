@@ -23,41 +23,46 @@ if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true")
   $data['page_title'] = 'Log In';
 }
 $data['title'] = 'Project Phoenix - Employee Recognition System';
+
+
+// Load user data from the session
+try {
+  $user = $um->load($_SESSION['id']);
+} catch (Exception $e) {
+  $data['error'] = "An error has occurred.  The object could not be retrieved.";
+}
+
 $data['id'] = $_SESSION['id'];
 $data['email'] = $_SESSION['email'];
+$data['firstName'] = $user->getFirstName();
+$data['lastName'] = $user->getLastName();
+if($user->getSignaturePath()) {
+  $data['signaturePath'] = $user->getSignaturePath();
+}
 
 // Process any form input
 if(isset($_POST['action'])) {
   switch($_POST['action']) {
     case "update":
-      try {
-        // Load the provided user from the database
-        $user = $um->load($_SESSION['id']);
-      } catch (Exception $e) {
-        $data['error'] = "An error has occurred.  The object could not be retrieved.";
-        break;
-      }
 
+      // If there's a file present, handle it
+      if (!empty($_FILES)) {
+        if(!$user->setSignature($_FILES['signatureFile']['tmp_name'])) {
+          $data['error'] = "An error has occurred.  The signature file could not be saved.";
+        }
+      }
       $user->setFirstName($_POST['firstName']);
       $user->setLastName($_POST['lastName']);
       $user->setEmail($_POST['email']);
 
+      $um->store($user);
+      if($user->getSignaturePath()) {
+        $data['signaturePath'] = $user->getSignaturePath();
+      }
       // Show the successful update message in the UI
       $data['updated'] = true;
     break;
-    default:
-      try {
-        // Load the provided user from the database
-        $user = $um->load($_SESSION['id']);
-      } catch (Exception $e) {
-        $data['error'] = "An error has occurred.  The object could not be retrieved.";
-        break;
-      }
-      $data['firstName'] = $user->getFirstName();
-      $data['lastName'] = $user->getLastName();
-      $data['email'] = $user->getEmail();
-      break;
-    }
+  }
 }
 
 // Pass the resulting data into the template

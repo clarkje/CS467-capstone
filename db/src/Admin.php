@@ -161,7 +161,7 @@ class Admin {
 
     // The reset token has not expired
     // http://stackoverflow.com/questions/1519228/get-interval-seconds-between-two-datetime-in-php
-    if ($GLOBALS['password_reset_timeout'] >= $delta) {
+    if ($GLOBALS['PASSWORD_RESET_TIMEOUT'] >= $delta) {
       // The reset token matches the expected value
       if ($resetHash === $this->resetHash) {
         return true;

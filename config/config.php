@@ -9,11 +9,19 @@ date_default_timezone_set('America/Los_Angeles');
 // Path to the document root
 $GLOBALS['DOCUMENT_ROOT'] = "/Users/jeclark/OSU/phoenix";
 
-// A password reset has is only valid for one hour
-$GLOBALS['password_reset_timeout'] = 3600;
 
 // The hostname of our application
-$GLOBALS['hostname'] = "localhost:8888";
+$GLOBALS['HOST_NAME'] = "localhost:8888";
+
+// Hostname for the user content, like signatures and certificates
+// Keeping it on a separate host is one defense against code injection
+$GLOBALS['STATIC_HOST'] = "localhost:8888";
+
+// Path to the static content root
+$GLOBALS['STATIC_ROOT'] = "/Users/jeclark/OSU/phoenix";
+
+// A password reset has is only valid for one hour
+$GLOBALS['PASSWORD_RESET_TIMEOUT'] = 3600;
 
 // Path to where certificates get stored
 $GLOBALS['CERT_PATH'] = "/static/cert/";

@@ -61,7 +61,7 @@ if(isset($_REQUEST['action'])) {
       // vs. having it embedded in the business logic.
 
       $resetLink = "https://"
-        . $GLOBALS['hostname']
+        . $GLOBALS['HOSTNAME']
         . "/admin/forgot_password.php?action=doReset&token="
         . $admin->getResetHash();
 
@@ -72,7 +72,7 @@ if(isset($_REQUEST['action'])) {
                 . $admin->getResetHash()
                 . "&email=" . $admin->getEmail() . "\r\n"
                 . "This reset link will expire in "
-                . ($GLOBALS['password_reset_timeout']/60) . " minutes.\r\n";
+                . ($GLOBALS['PASSWORD_RESET_TIMEOUT']/60) . " minutes.\r\n";
 
       $headers  = "From: noreply@jeromie.com" . "\r\n"
                 . "Reply-To: noreply@jeromie.com" . "\r\n";

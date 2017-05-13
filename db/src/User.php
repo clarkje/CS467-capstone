@@ -236,7 +236,7 @@ class User {
 
     // The reset token has not expired
     // http://stackoverflow.com/questions/1519228/get-interval-seconds-between-two-datetime-in-php
-    if ($GLOBALS['password_reset_timeout'] >= $delta) {
+    if ($GLOBALS['PASSWORD_RESET_TIMEOUT'] >= $delta) {
       // The reset token matches the expected value
       if ($resetHash === $this->resetHash) {
         return true;
@@ -271,42 +271,51 @@ class User {
     // We're going to build a random filename and path for the user's signature
     // to prevent a malicious user from planting files predictably on the filesystem
     $filename = bin2hex($string) . ".jpg";
-    $basePath = $GLOBALS['SIG_PATH'];
+    $basePath = $GLOBALS['DOCUMENT_ROOT'] . $GLOBALS['SIG_PATH'];
 
     // Since it's possible to exhaust the number of files in a single directory,
     // we'll partition the space by the first three letters of the hash, which is
     // hex, so we get 4096 directory entries.
 
     // Assuming a reasonably random distribution, this should let us scale pretty far
-    $filePath = "/" . substr($filename, 0, 3) . "/";
+    $filePath = substr($filename, 0, 3) . "/";
 
     if(!is_dir($filePath)) {
-      if(!mkdir($filePath, 0777, true)) {
+
+      // Took the chmod-after-the-fact trick from:
+      // http://stackoverflow.com/questions/12267889/create-writable-directories
+      $dir = $basePath . $filePath;
+      $dirMode = 0777;                // Make the directory writab
+
+      if(!mkdir($dir, $dirMode, true)) {
         return null;
       }
+      chmod($dir, $dirMode);
     }
 
-    $this->signaturePath = $basePath + $filePath + $filename;
+    $this->signaturePath = $GLOBALS['SIG_PATH'] . $filePath . $filename;
     return $this->signaturePath;
   }
 
   /**
+  * @param File uploaded file object
   * @return boolean
   * Adds a signature to the user account
   */
-  public function setSignature($uploadFile) {
+  public function setSignature($uploadedFile) {
 
-    // Check to see if the signature file is valid
+    // If the current signature path isn't writable, create one that is.
+    if(!($this->signaturePath) || !is_writable($this->getSignaturePath())) {
+      // Create a location to store it
+      if($this->createSignaturePath()) {
 
-    // Create a location to store it
-    if($this->createSignaturePath()) {
-
-    } else {
-      // Creating the location failed
+      } else {
+        die("Well, that didn't work");
+      }
     }
 
     // Move the specified file from the temporary location to the final location
-    return move_uploaded_file($uploadFile, $this->getSignaturePath());
+    return move_uploaded_file($uploadedFile, $GLOBALS['STATIC_ROOT'] . $this->getSignaturePath());
   }
 }
 ?>
