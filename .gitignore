@@ -1,8 +1,6 @@
 .DS_STORE
-config/clienttmp/
-config/admintmp/
-config/config.php
-configtmp/
+config/
+config/config
 vendor/
 composer.lock
 .imdone
