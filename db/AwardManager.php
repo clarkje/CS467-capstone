@@ -3,7 +3,7 @@
 require_once(__DIR__ . "/src/Award.php");
 
 class AwardManager {
-
+  
   /**
   * @var \Doctrine\ORM\EntityManager
   */

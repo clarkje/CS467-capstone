@@ -20,8 +20,8 @@ class Award {
 
   /**
   * @var string
-  * Many Awards have one User
-  * @ManyToOne(targetEntity="User")
+  * Many Awards have one User -- If the associated user is valid but unsaved, add it to the database.
+  * @ManyToOne(targetEntity="User", cascade={"persist"})
   * @JoinColumn(name="granter_id", referencedColumnName="id")
   */
   private $granter;
