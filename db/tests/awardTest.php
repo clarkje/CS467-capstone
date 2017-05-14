@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\Tools\SchemaTool;
 
-class UserDoctrineTest extends TestCase
+class AwardDoctrineTest extends TestCase
 {
 
   /**
