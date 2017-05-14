@@ -57,6 +57,9 @@ function loadAward($am, $id) {
 
   $data['granter'] = $award->getGranter()->getFirstName() . " "
     . $award->getGranter()->getLastName();
+
+  $data['certURL'] = $award->getCertURL();
+
   return $data;
 }
 

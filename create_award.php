@@ -6,6 +6,7 @@ require_once(__DIR__ . "/db/src/Award.php");
 require_once(__DIR__ . "/db/AwardManager.php");
 require_once(__DIR__ . "/db/src/User.php");
 require_once(__DIR__ . "/db/UserManager.php");
+require_once(__DIR__ . "/lib/CertGenerator.php");
 
 // Set up doctrine objects
 $emf = new EntityManagerFactory();
@@ -126,6 +127,13 @@ function handleFormInput($am, $um) {
 
         $grantDate = $award->getGrantDate()->format('m/d/Y');
         $data['grantDate'] = $grantDate;
+
+        // Fire off the cerificate creation process
+        $cg =  new CertGenerator();
+        $cg->createCertificate($award);
+
+        $data['certURL'] = $award->getCertURL();
+
         return $data;
       break;
       case "update":
@@ -139,6 +147,8 @@ function handleFormInput($am, $um) {
 
         $grantDate = $award->getGrantDate()->format('m/d/Y');
         $data['grantDate'] = $grantDate;
+        $data['certURL'] = $award->getCertURL();
+
         return $data;
       break;
       case "doUpdate":
@@ -160,6 +170,7 @@ function handleFormInput($am, $um) {
         $data['granterId'] = $award->getGranter()->getId();
         $grantDate = $award->getGrantDate()->format('m/d/Y');
         $data['grantDate'] = $grantDate;
+        $data['certURL'] = $award->getCertURL();
 
         return $data;
       break;

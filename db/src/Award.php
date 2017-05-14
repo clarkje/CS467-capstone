@@ -63,8 +63,21 @@ class Award {
   *
   * @Column(name="cert_path", type="string", nullable=true)
   **/
-  protected $certPath;
+  private $certPath;
 
+  /**
+  * @var boolean
+  *
+  * @Column(name="has_cert", type="string", nullable=false)
+  **/
+  private $hasCert = false;
+
+  /**
+  * @var boolean
+  *
+  * @Column(name="has_tex", type="string", nullable=false)
+  **/
+  private $hasTex = false;
 
   /**
   * @return int
@@ -116,6 +129,18 @@ class Award {
     return $this->certPath;
   }
 
+  public function __construct() {
+
+    // In this instance, we need to create and parse a .tex file to Output
+    // The tex and pdf files will use the same name, and processing will be handled asyncrhonously.
+
+    if(empty($this->createCertPath())) {
+      die("Award: Critical Failure - Unable to create certificate path.");
+    }
+  }
+
+
+
   /**
   * @return string
   * Returns the full URL to the certificate
@@ -130,9 +155,9 @@ class Award {
     if(!empty($_SERVER['HTTPS'])) {
       $basePath .= "s";
     }
-    $basePath .= "://" . $GLOBALS['STATIC_HOST'] . $GLOBALS['SIG_PATH'];
+    $basePath .= "://" . $GLOBALS['STATIC_HOST'] . $GLOBALS['CERT_PATH'];
 
-    return $basePath . $this->signaturePath;
+    return $basePath . $this->certPath . ".pdf";
   }
 
   /**
@@ -192,6 +217,47 @@ class Award {
   }
 
   /**
+  * @param boolean
+  * @return null
+  **/
+  public function hasTex() {
+
+    if ($this->hasTex == true) {
+      return true;
+    } else {
+      // Look to see that it exists and is greater than 0 bytes
+      $basePath = $GLOBALS['STATIC_ROOT'] . $GLOBALS['CERT_PATH'];
+      $filePath = $basePath . $this->certPath . ".tex";
+
+      if (file_exists($filePath) && is_readable($filePath) && filesize($filePath) > 0) {
+        $this->hasTex = true;
+      }
+    }
+    return $this->hasTex;
+  }
+
+  /**
+  * @param boolean
+  * @return null
+  **/
+  public function hasCert() {
+
+    if ($this->hasCert == true) {
+      return true;
+    } else {
+
+      // Look to see that it exists and is greater than 0 bytes
+      $basePath = $GLOBALS['STATIC_ROOT'] . $GLOBALS['CERT_PATH'];
+      $filePath = $basePath . $this->certPath . ".pdf";
+
+      if (file_exists($filePath) && is_readable($filePath) && filesize($filePath) > 0) {
+        $this->hasCert = true;
+      }
+    }
+    return $this->hasCert;
+  }
+
+  /**
   * @return string
   * Generates a random path to store a signature
   */
@@ -215,7 +281,7 @@ class Award {
 
     // We're going to build a random filename and path for the user's signature
     // to prevent a malicious user from planting files predictably on the filesystem
-    $filename = bin2hex($string) . ".pdf";
+    $filename = bin2hex($string);
     $basePath = $GLOBALS['STATIC_ROOT'] . $GLOBALS['CERT_PATH'];
 
     // Since it's possible to exhaust the number of files in a single directory,
@@ -240,26 +306,6 @@ class Award {
 
     $this->certPath = $filePath . $filename;
     return $this->certPath;
-  }
-
-  /**
-  * @param File uploaded file object
-  * @return boolean
-  * Adds a signature to the user account
-  */
-  public function setCert($certFile) {
-
-    // If the current signature path isn't writable, create one that is.
-    if(!($this->signaturePath) || !is_writable($this->getSignaturePath())) {
-      // Create a location to store it
-      if($this->createSignaturePath()) {
-
-      } else {
-        die("Error: Could not write the uploaded file.");
-      }
-    }
-    // Move the generated file into the correct location
-   return false;
   }
 }
 ?>
