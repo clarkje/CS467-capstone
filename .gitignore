@@ -1,8 +1,14 @@
 .DS_STORE
+<<<<<<< HEAD
 config/clienttmp/
 config/admintmp/
 config/config.php
 configtmp/
+=======
+config/
+config/config.php
+>>>>>>> upstream/master
 vendor/
 composer.lock
 .imdone
+static/

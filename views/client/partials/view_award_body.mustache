@@ -1,0 +1,10 @@
+<!-- If the user is not logged in, show the login form -->
+{{^user_info}}
+  {{>login}}
+{{/user_info}}
+{{#user_info}}
+  {{#award}}
+    {{>award_view}}
+  {{/award}}
+  {{>award_list}}
+{{/user_info}}

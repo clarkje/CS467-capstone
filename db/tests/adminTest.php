@@ -30,12 +30,28 @@ class AdminDoctrineTest extends TestCase
 
 
   public static function setUpBeforeClass() {
-    $emFactory = new EntityManagerFactory();
-    self::$em = $emFactory->getEntityManager();
+  }
+
+  protected function setUp() {
+
+    // For tests that don't have dependencies, clear out any test user entries
+    // Borrowed from:
+    // http://stackoverflow.com/questions/18426085/is-it-possible-to-use-phpunit-depends-without-calling-teardown-and-setup-betwee
+
+    if (!$this->hasDependencies()) {
+      $emFactory = new EntityManagerFactory();
+      self::$em = $emFactory->getEntityManager();
+
+      // Just blow away all instances of our test users between tests.
+      // From example at:
+      // http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/native-sql.html
+      $query = self::$em->createQuery('DELETE Admin a WHERE a.email IN (?0,?1)');
+      $query->setParameters(array($this->testEmail1, $this->testEmail2));
+      $query->getResult();
+    }
   }
 
   protected function tearDown() {
-    self::$em->clear();
     parent::tearDown();
   }
 
@@ -93,7 +109,6 @@ class AdminDoctrineTest extends TestCase
   /**
   * @depends testCreateAdmin
   */
-
   public function testLoadAdmin(Admin $oldAdmin) {
 
     $am = new AdminManager(self::$em);
@@ -102,21 +117,23 @@ class AdminDoctrineTest extends TestCase
     $loadedAdmin = $am->load($oldAdmin->getId());
 
     $this->assertEquals($loadedAdmin, $oldAdmin, "The loaded and in-memory Admin objects should be identical");
-
-    return $loadedAdmin;
+    return $oldAdmin;
   }
 
-  /**
-  * @depends testLoadAdmin
-  */
 
-  public function testSetPassword(Admin $admin) {
+  public function testSetPassword() {
 
     $am = new AdminManager(self::$em);
+
+    $admin = new Admin();
+    $admin->setEmail($this->testEmail1);
+    $admin->setPassword($this->testPassword1);
+    $am->store($admin);
 
     $admin->setPassword($this->testPassword2);
     $this->assertTrue($admin->verifyPassword($this->testPassword2), "The new password should validate correctly.");
     $this->assertFalse($admin->verifyPassword($this->testPassword1), "An incorrect password should return false.");
+
 
     // Store the object to the database
     $am->store($admin);
@@ -129,15 +146,15 @@ class AdminDoctrineTest extends TestCase
     return $admin;
   }
 
-  /**
-  * @depends testSetPassword
-  */
-
-  public function testSetPasswordUTF8(Admin $admin) {
+  public function testSetPasswordUTF8() {
 
     $am = new AdminManager(self::$em);
 
-    // Found a nifty UTF test string generator here: https://www.tienhuis.nl/utf8-generator
+    $admin = new Admin();
+    $admin->setEmail($this->testEmail1);
+    $admin->setPassword($this->testPassword1);
+    $am->store($admin);
+
     $admin->setPassword($this->testUTF8Password1);
 
     $this->assertTrue($admin->verifyPassword($this->testUTF8Password1));
@@ -145,22 +162,23 @@ class AdminDoctrineTest extends TestCase
 
     // Store the object to the database
     $am->store($admin);
+
     // Load the object by it's ID from the database
     $loadedAdmin = $am->load($admin->getId());
 
     // Verify that the loaded object's password validates correctly
     $this->assertTrue($loadedAdmin->verifyPassword($this->testUTF8Password1));
-    return $admin;
-
   }
 
-  /**
-  * @depends testSetPassword
-  */
-
-  public function testSetEmail(Admin $admin) {
+  public function testSetEmail() {
 
     $am = new AdminManager(self::$em);
+
+    $admin = new Admin();
+    $admin->setEmail($this->testEmail1);
+    $admin->setPassword($this->testPassword1);
+    $am->store($admin);
+
     $admin->setEmail($this->testEmail2);
 
     // Verify that the email got updated
@@ -174,52 +192,64 @@ class AdminDoctrineTest extends TestCase
     return $admin;
   }
 
-  /**
-  * @depends testSetEmail
-  */
-
-  public function testFindByEmail(Admin $admin) {
+  public function testFindByEmail() {
 
     $am = new AdminManager(self::$em);
+
+    $admin = new Admin();
+    $admin->setEmail($this->testEmail1);
+    $admin->setPassword($this->testPassword1);
+    $am->store($admin);
+
+    $admin2 = new Admin();
+    $admin2->setEmail($this->testEmail2);
+    $admin2->setPassword($this->testPassword2);
+    $am->store($admin2);
+
     $loadedAdmin = $am->loadByEmail($this->testEmail2);
 
     // The first result should match the object that was returned in the previous test
-    $this->assertEquals($loadedAdmin[0]->getEmail(), $admin->getEmail(), "Email for Admin and LoadedAdmin[0] should match");
-
-    return $admin;
+    $this->assertEquals($loadedAdmin[0]->getEmail(), $admin2->getEmail(), "Email for Admin and LoadedAdmin[0] should match");
   }
 
-  /**
-  * @depends testFindByEmail
-  */
+  public function testFindByEmailAndDelete() {
 
-  public function testFindByEmailAndDelete(Admin $admin) {
+      $am = new AdminManager(self::$em);
 
-    $am = new AdminManager(self::$em);
-    $loadedAdmin = $am->loadByEmail($this->testEmail2, "We should begin this test with entities to delete.");
+      $admin = new Admin();
+      $admin->setEmail($this->testEmail1);
+      $admin->setPassword($this->testPassword1);
+      $am->store($admin);
 
-    $this->assertNotEmpty($loadedAdmin);
+      $admin2 = new Admin();
+      $admin2->setEmail($this->testEmail2);
+      $admin2->setPassword($this->testPassword2);
+      $am->store($admin2);
 
-    foreach ($loadedAdmin as &$admin) {
-        $am->delete($admin);
-    }
+      $loadedAdmin = $am->loadByEmail($this->testEmail2, "We should begin this test with entities to delete.");
 
-    $loadedAdmin = $am->loadByEmail($this->testEmail2);
-    $this->assertEmpty($loadedAdmin, "After deleting all entities associated with the email address, there shouldn't be any left.");
+      $this->assertNotEmpty($loadedAdmin);
 
-    // Just cleaning up our mess in the database...
+      foreach ($loadedAdmin as &$admin) {
+          $am->delete($admin);
+      }
 
-    $am = new AdminManager(self::$em);
-    $loadedAdmin = $am->loadByEmail($this->testEmail1, "We should begin this test with entities to delete.");
+      $loadedAdmin = $am->loadByEmail($this->testEmail2);
+      $this->assertEmpty($loadedAdmin, "After deleting all entities associated with the email address, there shouldn't be any left.");
 
-    $this->assertNotEmpty($loadedAdmin);
+      // Just cleaning up our mess in the database...
 
-    foreach ($loadedAdmin as &$admin) {
-        $am->delete($admin);
-    }
+      $am = new AdminManager(self::$em);
+      $loadedAdmin = $am->loadByEmail($this->testEmail1, "We should begin this test with entities to delete.");
 
-    $loadedAdmin = $am->loadByEmail($this->testEmail1);
-    $this->assertEmpty($loadedAdmin, "After deleting all entities associated with the email address, there shouldn't be any left.");
+      $this->assertNotEmpty($loadedAdmin);
+
+      foreach ($loadedAdmin as &$admin) {
+          $am->delete($admin);
+      }
+
+      $loadedAdmin = $am->loadByEmail($this->testEmail1);
+      $this->assertEmpty($loadedAdmin, "After deleting all entities associated with the email address, there shouldn't be any left.");
     }
 
     public function testPasswordReset() {
@@ -250,9 +280,6 @@ class AdminDoctrineTest extends TestCase
 
       // Just double check that it validates after storage
       $admin->validateResetHash($admin->getResetHash());
-
-      // Clean up after ourselves
-      $am->delete($admin);
     }
 
     // These tests invalidate the EntityManager, so keep anything you want
@@ -262,7 +289,6 @@ class AdminDoctrineTest extends TestCase
     * @expectedException Doctrine\DBAL\Exception\NotNullConstraintViolationException
     */
     public function testStoreNullEmail() {
-
       $am = new AdminManager(self::$em);
       $admin = new Admin();
       $admin->setEmail(null);
@@ -270,15 +296,45 @@ class AdminDoctrineTest extends TestCase
     }
 
     /**
-    * @expectedException Doctrine\ORM\ORMException
+    * @expectedException Doctrine\DBAL\Exception\NotNullConstraintViolationException
     */
     public function testStoreNullPassword() {
 
       $am = new AdminManager(self::$em);
+
       $admin = new Admin();
       $admin->setEmail($this->testEmail1);
       $admin->setPassword(null);
+
       $this->assertFalse($am->store($admin));
     }
+
+    // The unique email constraint should prevent us from creating multiple
+    // users with identical email addresses
+
+    /**
+    * @expectedException Doctrine\DBAL\Exception\UniqueConstraintViolationException
+    */
+
+    public function testUniqueEmailConstraint() {
+
+      // Setup a new Admin object
+      $admin = new Admin();
+      $am = new AdminManager(self::$em);
+
+      // Provide some basic inputs
+      $admin->setEmail($this->testEmail1);
+      $admin->setPassword($this->testPassword1);
+      $this->assertTrue($am->store($admin));
+
+      $admin2 = new Admin();
+      // Provide some basic inputs
+      $admin2->setEmail($this->testEmail1);
+      $admin2->setPassword($this->testPassword1);
+      $this->assertFalse($am->store($admin2));
+
+      $am->delete($admin);
+    }
+
 }
 ?>

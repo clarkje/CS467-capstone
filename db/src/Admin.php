@@ -2,7 +2,7 @@
 use Doctrine\ORM\Mapping as ORM;
 
 /**
-* @Table(name="admin")
+* @Table(name="admin", uniqueConstraints={@UniqueConstraint(name="email_idx",columns={"email"})})
 * @Entity
 **/
 class Admin {
@@ -101,7 +101,12 @@ class Admin {
   * @return null
   **/
   public function setPassword($password) {
-    $this->password = password_hash($password, PASSWORD_DEFAULT);
+    // If the user attempts to store a null password, we don't want to store a hash of null...
+    if(!$password) {
+      $this->password = null;
+    } else {
+      $this->password = password_hash($password, PASSWORD_DEFAULT);
+    }
   }
 
   /**
@@ -149,14 +154,14 @@ class Admin {
   // If user gets <n> failed password hash validation attempts in a timeout period,
   // lock the accout out for an extended period of time
   public function validateResetHash($resetHash) {
-    
+
     date_default_timezone_set('America/Los_Angeles');
     $curTime = new DateTime("now");
     $delta = $curTime->getTimestamp() - $this->resetTimestamp->getTimestamp();
 
     // The reset token has not expired
     // http://stackoverflow.com/questions/1519228/get-interval-seconds-between-two-datetime-in-php
-    if ($GLOBALS['password_reset_timeout'] >= $delta) {
+    if ($GLOBALS['PASSWORD_RESET_TIMEOUT'] >= $delta) {
       // The reset token matches the expected value
       if ($resetHash === $this->resetHash) {
         return true;

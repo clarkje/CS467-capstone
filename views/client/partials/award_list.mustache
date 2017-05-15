@@ -1,0 +1,34 @@
+
+<h2>Awards</h2>
+  <table class="table table-hover">
+      <thead>
+          <tr>
+              <th>#</th>
+              <th>First</th>
+              <th>Last</th>
+              <th>Email</th>
+              <th>Grant Date</th>
+              <th>Granted By</th>
+          </tr>
+      </thead>
+      <tbody>
+        {{#awards}}
+          <tr>
+              <td><a href="view_award.php?view={{id}}">Details</a></td>
+              <td>{{recipientFirst}}</td>
+              <td>{{recipientLast}}</td>
+              <td>{{recipientEmail}}</td>
+              <td>{{grantDate}}</td>
+              <td>{{granter}}</td>
+          </tr>
+        {{/awards}}
+
+        {{^awards}}
+        <tr>
+          <th scope=row>
+            <td colspan=6> No awards found.  You should probably make some. </td>
+          </th>
+        </tr>
+        {{/awards}}
+      </tbody>
+  </table>
