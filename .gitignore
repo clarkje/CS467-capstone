@@ -1,6 +1,13 @@
 .DS_STORE
+<<<<<<< HEAD
 config/
 config/config.php
+=======
+config/clienttmp/
+config/admintmp/
+config/config.php
+configtmp/
+>>>>>>> added form to create awards, generate tex file and pdf
 vendor/
 composer.lock
 .imdone
