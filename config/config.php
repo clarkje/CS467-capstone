@@ -9,7 +9,6 @@ date_default_timezone_set('America/Los_Angeles');
 // Path to the document root
 $GLOBALS['DOCUMENT_ROOT'] = "/Users/jeclark/OSU/phoenix";
 
-
 // The hostname of our application
 $GLOBALS['HOST_NAME'] = "localhost:8888";
 
@@ -28,4 +27,7 @@ $GLOBALS['CERT_PATH'] = "/static/cert/";
 
 // Path to where signatures get stored
 $GLOBALS['SIG_PATH'] = "/static/sig/";
+
+// Path to pdflatex binary
+$GLOBALS['PDFLATEX_PATH'] = "/usr/local/texlive/2016/bin/x86_64-darwin/pdflatex";
 ?>
