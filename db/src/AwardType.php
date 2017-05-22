@@ -67,7 +67,7 @@ class AwardType {
   * @param string
   * @return null
   */
-  public function setTemplateFile($address) {
+  public function setTemplateFile($templateFile) {
     $this->templateFile = $templateFile;
   }
 }
