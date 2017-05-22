@@ -19,7 +19,15 @@ class Award {
   private $id;
 
   /**
-  * @var string
+  * @var int
+  * Many Awards have one AwardType -- If the associated user is valid but unsaved, add it to the database.
+  * @ManyToOne(targetEntity="AwardType", cascade={"persist"})
+  * @JoinColumn(name="awardType_id", referencedColumnName="id", nullable=false)
+  */
+  private $awardType;
+
+  /**
+  * @var int
   * Many Awards have one User -- If the associated user is valid but unsaved, add it to the database.
   * @ManyToOne(targetEntity="User", cascade={"persist"})
   * @JoinColumn(name="granter_id", referencedColumnName="id", nullable=false)
@@ -45,18 +53,19 @@ class Award {
   private $recipientEmail;
 
   /**
+  * @var int
+  * Many Awards have one Recipient Adderess
+  * If the associated address is valid but unsaved, add it to the database.
+  * @ManyToOne(targetEntity="Address", cascade={"persist"})
+  * @JoinColumn(name="recipientAddress_id", referencedColumnName="id", nullable=false)
+  */
+  private $recipientAddress;
+
+  /**
   * @var datetime
   * @Column(name="grant_date", type="datetime", nullable=true)
   **/
   private $grantDate;
-
-
-  // TODO: Setup relationship with AwardType column
-  /**
-  * @var integer
-  * @Column(name="awardType", type="integer", nullable=false)
-  */
-  private $awardType = 1;
 
   /**
   * @var string
@@ -167,6 +176,14 @@ class Award {
     return $this->awardType;
   }
 
+  /**
+  * @param AwardType
+  * @return null
+  */
+  public function setAwardType() {
+    return $this->awardType();
+  }
+
 
   /**
   * @param int
@@ -206,14 +223,6 @@ class Award {
   **/
   public function setGrantDate($grantDate) {
     $this->grantDate = $grantDate;
-  }
-
-  /**
-  * @param int
-  * @return null
-  **/
-  public function setAwardType($awardType) {
-    $this->awardType = $awardType;
   }
 
   /**

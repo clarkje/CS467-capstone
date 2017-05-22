@@ -58,14 +58,15 @@ class Address {
   *
   * @Column(name="state", type="string", nullable=true)
   **/
-  protected $state;   // not all countries have states... 
+  protected $state;   // not all countries have states...
 
   /**
-  * @var string
-  *
-  * @Column(name="country", type="string", nullable=false)
-  **/
-  protected $country;
+  * @var int
+  * Many Addresses have one Country -- If the associated country is valid but unsaved, add it to the database.
+  * @ManyToOne(targetEntity="Country", cascade={"persist"})
+  * @JoinColumn(name="country_id", referencedColumnName="id", nullable=false)
+  */
+  private $country;
 
   /**
   * @var string
@@ -80,6 +81,13 @@ class Address {
 
   public function getId() {
     return $this->id;
+  }
+
+  /**
+  * @return Country
+  **/
+  public function getCountry() {
+    return $this->country;
   }
 
   /**
@@ -122,13 +130,6 @@ class Address {
   **/
   public function getState() {
     return $this->state;
-  }
-
-  /**
-  * @return string
-  **/
-  public function getCountry() {
-    return $this->country;
   }
 
   /**
@@ -187,7 +188,7 @@ class Address {
   }
 
   /**
-  * @param string
+  * @param Country object
   * @return null
   */
   public function setCountry($country) {
