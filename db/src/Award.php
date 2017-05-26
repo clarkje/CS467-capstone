@@ -170,18 +170,26 @@ class Award {
   }
 
   /**
-  * @return int
+  * @return Award
   **/
   public function getAwardType() {
     return $this->awardType;
   }
 
   /**
+  * @return Address recipientAddress
+  */
+  public function getRecipientAddress() {
+    return $this->recipientAddress;
+  }
+
+
+  /**
   * @param AwardType
   * @return null
   */
-  public function setAwardType() {
-    return $this->awardType();
+  public function setAwardType($awardType) {
+    $this->awardType = $awardType;
   }
 
 
@@ -200,6 +208,16 @@ class Award {
   public function setRecipientFirst($first) {
     $this->recipientFirst = $first;
   }
+
+  /**
+  * @param address
+  * @return null
+  */
+
+  public function setRecipientAddress($address) {
+    $this->recipientAddress = $address;
+  }
+
 
   /**
   * @param string
@@ -307,10 +325,12 @@ class Award {
       $dir = $basePath . $filePath;
       $dirMode = 0777;                // Make the directory writab
 
-      if(!mkdir($dir, $dirMode, true)) {
-        return null;
+      if(!file_exists($dir)) {
+        if(!mkdir($dir, $dirMode, true)) {
+          return null;
+        }
+        chmod($dir, $dirMode);
       }
-      chmod($dir, $dirMode);
     }
 
     $this->certPath = $filePath . $filename;
