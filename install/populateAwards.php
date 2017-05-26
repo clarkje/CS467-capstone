@@ -553,6 +553,7 @@ foreach($grantees as $granteeData) {
 
 echo("\nGenerating Overachievers: \n");
 for ($i = 0; $i < 200; $i++) {
+  $granteeData = $grantees[rand(0,sizeof($grantees) * 0.1)];
   $award = buildAward($addresses, $awardTypes, $granteeData, $users);
   echo(".");
   $awardManager->store($award);
