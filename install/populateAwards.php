@@ -594,7 +594,7 @@ function buildAward($addresses, $awardTypes, $granteeData, $users) {
   $date = new DateTime();
   date_default_timezone_set('America/Los_Angeles');
   $ts = time();
-  $ts = $ts - mt_rand(0, (3.154 * 10^7));
+  $ts = $ts - mt_rand(0, 31400000);
   $date->setTimestamp($ts);
 
   $award->setGrantDate($date);
