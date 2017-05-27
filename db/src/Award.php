@@ -1,6 +1,12 @@
 <?php
 use Doctrine\ORM\Mapping as ORM;
 
+require_once(__DIR__ . "/Address.php");
+require_once(__DIR__ . "/AwardType.php");
+require_once(__DIR__ . "/Country.php");
+require_once(__DIR__ . "/Region.php");
+require_once(__DIR__ . "/User.php");
+
 /**
 * @Table(name="award");
 * @Entity
@@ -19,7 +25,15 @@ class Award {
   private $id;
 
   /**
-  * @var string
+  * @var int
+  * Many Awards have one AwardType -- If the associated user is valid but unsaved, add it to the database.
+  * @ManyToOne(targetEntity="AwardType", cascade={"persist"})
+  * @JoinColumn(name="awardType_id", referencedColumnName="id", nullable=false)
+  */
+  private $awardType;
+
+  /**
+  * @var int
   * Many Awards have one User -- If the associated user is valid but unsaved, add it to the database.
   * @ManyToOne(targetEntity="User", cascade={"persist"})
   * @JoinColumn(name="granter_id", referencedColumnName="id", nullable=false)
@@ -45,18 +59,19 @@ class Award {
   private $recipientEmail;
 
   /**
+  * @var int
+  * Many Awards have one Recipient Adderess
+  * If the associated address is valid but unsaved, add it to the database.
+  * @ManyToOne(targetEntity="Address", cascade={"persist"})
+  * @JoinColumn(name="recipientAddress_id", referencedColumnName="id", nullable=false)
+  */
+  private $recipientAddress;
+
+  /**
   * @var datetime
   * @Column(name="grant_date", type="datetime", nullable=true)
   **/
   private $grantDate;
-
-
-  // TODO: Setup relationship with AwardType column
-  /**
-  * @var integer
-  * @Column(name="awardType", type="integer", nullable=false)
-  */
-  private $awardType = 1;
 
   /**
   * @var string
@@ -161,10 +176,26 @@ class Award {
   }
 
   /**
-  * @return int
+  * @return Award
   **/
   public function getAwardType() {
     return $this->awardType;
+  }
+
+  /**
+  * @return Address recipientAddress
+  */
+  public function getRecipientAddress() {
+    return $this->recipientAddress;
+  }
+
+
+  /**
+  * @param AwardType
+  * @return null
+  */
+  public function setAwardType($awardType) {
+    $this->awardType = $awardType;
   }
 
 
@@ -183,6 +214,16 @@ class Award {
   public function setRecipientFirst($first) {
     $this->recipientFirst = $first;
   }
+
+  /**
+  * @param address
+  * @return null
+  */
+
+  public function setRecipientAddress($address) {
+    $this->recipientAddress = $address;
+  }
+
 
   /**
   * @param string
@@ -206,14 +247,6 @@ class Award {
   **/
   public function setGrantDate($grantDate) {
     $this->grantDate = $grantDate;
-  }
-
-  /**
-  * @param int
-  * @return null
-  **/
-  public function setAwardType($awardType) {
-    $this->awardType = $awardType;
   }
 
   /**
@@ -298,10 +331,12 @@ class Award {
       $dir = $basePath . $filePath;
       $dirMode = 0777;                // Make the directory writab
 
-      if(!mkdir($dir, $dirMode, true)) {
-        return null;
+      if(!file_exists($dir)) {
+        if(!mkdir($dir, $dirMode, true)) {
+          return null;
+        }
+        chmod($dir, $dirMode);
       }
-      chmod($dir, $dirMode);
     }
 
     $this->certPath = $filePath . $filename;
