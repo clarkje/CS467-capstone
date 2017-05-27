@@ -1,6 +1,12 @@
 <?php
 use Doctrine\ORM\Mapping as ORM;
 
+require_once(__DIR__ . "/Address.php");
+require_once(__DIR__ . "/AwardType.php");
+require_once(__DIR__ . "/Country.php");
+require_once(__DIR__ . "/Region.php");
+require_once(__DIR__ . "/User.php");
+
 /**
 * @Table(name="award");
 * @Entity
