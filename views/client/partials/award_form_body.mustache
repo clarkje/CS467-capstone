@@ -92,6 +92,31 @@
 
 
 <h2>Awards</h2>
+
+{{#pagination}}
+  <div>
+    Showing records {{currentOffsetStart}} - {{currentOffsetEnd}}
+  </div>
+  <nav aria-label="Award List">
+    <ul class="pagination">
+{{/pagination}}
+{{#pagination.pageData}}
+          {{#active}}
+            <li class="active"><a href="{{pagination.pageLink}}"><span class="sr-only">(current)</span>
+          {{/active}}
+          {{^active}}
+            <li class="{{pagination.pageData.disabled}}"><a href="{{pagination.pageLink}}?offset={{offset}}">
+          {{/active}}
+
+          {{label}}</a></li>
+
+{{/pagination.pageData}}
+{{#pagination}}
+    </ul>
+  </nav>
+{{/pagination}}
+
+
   <table class="table table-hover">
       <thead>
           <tr>
@@ -132,4 +157,25 @@
         {{/awards}}
       </tbody>
   </table>
+
+  {{#pagination}}
+  <nav aria-label="Award List">
+      <ul class="pagination">
+  {{/pagination}}
+  {{#pagination.pageData}}
+            {{#active}}
+              <li class="active"><a href="{{pagination.pageLink}}"><span class="sr-only">(current)</span>
+            {{/active}}
+            {{^active}}
+              <li class="{{pagination.pageData.disabled}}"><a href="{{pagination.pageLink}}?offset={{offset}}">
+            {{/active}}
+
+            {{label}}</a></li>
+
+  {{/pagination.pageData}}
+  {{#pagination}}
+      </ul>
+    </nav>
+  {{/pagination}}
+
 <!-- admin_form end -->
