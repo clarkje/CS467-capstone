@@ -19,12 +19,14 @@ require($_SERVER['DOCUMENT_ROOT'] . '/config/client/mustache.php');
 $tpl = $mustache->loadTemplate('report_region');
 $data = array();  // Output for display by the template engine
 
+$data['formAction'] = $_SERVER['PHP_SELF'];
+
 
 // Handle any custom dates that might get set
 if(isset($_GET['startDate'])) {
   $startDate = DateTime::createFromFormat('m/d/Y', $_GET['startDate']);
   $data['dateRangeStart'] = date_format($startDate, "M d Y");
-  $data['startDate'] = date_format($startDate, "m/d/Y");  // it gets validated this way... 
+  $data['startDate'] = date_format($startDate, "m/d/Y");  // it gets validated this way...
 } else {
   $startDate = null;
 }
