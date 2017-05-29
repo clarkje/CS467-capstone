@@ -1,0 +1,31 @@
+<!-- report_region_content -->
+{{>report_date_picker}}
+  <div>
+    <p><br>
+  Showing Data from Dates: {{^dateRangeStart}}All{{/dateRangeStart}}
+                         {{#dateRangeStart}}{{dateRangeStart}} - {{dateRangeEnd}}{{/dateRangeStart}}
+    </p>
+  </div>
+
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+
+   google.charts.load('current', {'packages':['bar']});
+   google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          {{chartDataString}}
+        ]);
+
+        var options = {
+          bars: 'horizontal'
+        };
+        var chart = new google.charts.Bar(document.getElementById('chart_div'));
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+      }
+  </script>
+
+  <div id="chart_div" style="height: 500px;"></div>
+
+<!-- /report_region_content -->
