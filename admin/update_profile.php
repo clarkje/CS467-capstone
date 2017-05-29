@@ -24,8 +24,13 @@ if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true")
 }
 $data['title'] = 'Project Phoenix - Admin';
 
-$data['admin']['id'] = $_SESSION['id'];
-$data['admin']['email'] = $_SESSION['email'];
+if(isset($_SESSION['id'])) {
+  $data['admin']['id'] = $_SESSION['id'];
+}
+
+if(isset($_SESSION['email'])) {
+  $data['admin']['email'] = $_SESSION['email'];
+}
 
 // Process any form input
 if(isset($_POST['action'])) {
