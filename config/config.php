@@ -7,7 +7,7 @@
 date_default_timezone_set('America/Los_Angeles');
 
 // Path to the document root
-$GLOBALS['DOCUMENT_ROOT'] = "/Users/jeclark/OSU/phoenix";
+$GLOBALS['DOCUMENT_ROOT'] = "/Users/stupidalphabet/Desktop/Classes/CS467-Capstone/phoenix";
 
 // The hostname of our application
 $GLOBALS['HOST_NAME'] = "localhost:8888";
@@ -17,7 +17,7 @@ $GLOBALS['HOST_NAME'] = "localhost:8888";
 $GLOBALS['STATIC_HOST'] = "localhost:8888";
 
 // Path to the static content root
-$GLOBALS['STATIC_ROOT'] = "/Users/jeclark/OSU/phoenix";
+$GLOBALS['STATIC_ROOT'] = "/Users/stupidalphabet/Desktop/Classes/CS467-Capstone/phoenix";
 
 // A password reset has is only valid for one hour
 $GLOBALS['PASSWORD_RESET_TIMEOUT'] = 3600;

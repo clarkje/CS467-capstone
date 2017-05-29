@@ -19,6 +19,7 @@ require($_SERVER['DOCUMENT_ROOT'] . '/config/client/mustache.php');
 $tpl = $mustache->loadTemplate('create_award');
 $data = array();  // Output for display by the template engine
 
+
 // If the user is logged in, proceed.  Otherwise, show the login screen.
 if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true") {
   $data['award'] = handleFormInput($am, $um);
@@ -31,6 +32,7 @@ if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true")
   $data['page_title'] = 'Log In';
 }
 $data['title'] = 'Project Phoenix - Employee Recognition System';
+
 
 // Pass the resulting data into the template
 echo $tpl->render($data);
