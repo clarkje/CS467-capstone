@@ -16,7 +16,7 @@ $am = new AwardManager($em);
 
 // Setup the template engine
 require($_SERVER['DOCUMENT_ROOT'] . '/config/client/mustache.php');
-$tpl = $mustache->loadTemplate('report_granter');
+$tpl = $mustache->loadTemplate('report_recipient');
 $data = array();  // Output for display by the template engine
 
 $data['formAction'] = $_SERVER['PHP_SELF'];
