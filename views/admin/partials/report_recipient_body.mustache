@@ -1,0 +1,7 @@
+<!-- If the user is not logged in, show the login form -->
+{{^user_info}}
+  {{>login}}
+{{/user_info}}
+{{#user_info}}
+  {{>report_recipient_content}}
+{{/user_info}}

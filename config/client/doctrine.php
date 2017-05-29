@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManager;
 
 require_once(__DIR__ . "/../config.php");
 
+
 // TODO: It probably makes sense to have this be a Singleton, but I'm not 100% sure it matters.
 class EntityManagerFactory
 {
@@ -24,7 +25,6 @@ class EntityManagerFactory
       'url' => 'mysql://root:root@127.0.0.1:8889/phoenix_admin'
     );
 
-    $config = Setup::createAnnotationMetadataConfiguration(array($GLOBALS['DOCUMENT_ROOT'] . "/db/src"), $isDevMode);
     $this->entityManager = EntityManager::create($connectionParams, $config);
   }
 
