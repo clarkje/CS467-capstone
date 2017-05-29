@@ -38,10 +38,44 @@ class AwardManager {
   * @param DateTime $endDate
   * @return Array array of regions and counts
   */
-
   public function getAwardCountByGranter($startDate = null, $endDate = null, $limit = null) {
 
+    $queryString = "SELECT count(a) AS awardCount, u.firstName, u.lastName
+                      FROM Award a
+                      JOIN a.granter u
+    ";
 
+    if(!empty($startDate) || !empty($endDate)) {
+      $queryString .= " WHERE ";
+    }
+
+    if(!empty($startDate)) {
+      $queryString .= " a.grantDate > :startDate";
+    }
+
+    if(!empty($startDate) && !empty($endDate)) {
+      $queryString .= " AND ";
+    }
+
+    if(!empty($endDate)) {
+      $queryString .= " a.grantDate < :endDate";
+    }
+
+    $queryString .= " GROUP BY u.firstName, u.lastName";
+
+    $query = $this->em->createQuery($queryString);
+
+    $params = array();
+    if(!empty($startDate)) {
+      $query->setParameter('startDate', $startDate);
+    }
+
+    if(!empty($endDate)) {
+      $query->setParameter('endDate', $endDate);
+    }
+
+    $result = $query->getResult();
+    return $result;
   }
 
   /**
