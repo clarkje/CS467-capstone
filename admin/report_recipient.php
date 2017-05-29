@@ -1,12 +1,11 @@
 <?php
 ini_set('display_errors', 'On');
 
-require_once(__DIR__ . "/config/client/config.php");
-require_once(__DIR__ . "/db/src/Award.php");
-require_once(__DIR__ . "/db/AwardManager.php");
-require_once(__DIR__ . "/db/src/User.php");
-require_once(__DIR__ . "/db/UserManager.php");
-require_once(__DIR__ . "/lib/CertGenerator.php");
+require_once(__DIR__ . "/../config/admin/config.php");
+require_once(__DIR__ . "/../db/src/Award.php");
+require_once(__DIR__ . "/../db/AwardManager.php");
+require_once(__DIR__ . "/../db/src/User.php");
+require_once(__DIR__ . "/../db/UserManager.php");
 
 // Set up doctrine objects
 $emf = new EntityManagerFactory();
@@ -15,8 +14,8 @@ $um = new UserManager($em);
 $am = new AwardManager($em);
 
 // Setup the template engine
-require($_SERVER['DOCUMENT_ROOT'] . '/config/client/mustache.php');
-$tpl = $mustache->loadTemplate('report_date');
+require($_SERVER['DOCUMENT_ROOT'] . '/config/admin/mustache.php');
+$tpl = $mustache->loadTemplate('report_recipient');
 $data = array();  // Output for display by the template engine
 
 $data['formAction'] = $_SERVER['PHP_SELF'];
@@ -41,6 +40,8 @@ if(isset($_GET['endDate'])) {
 if(isset($_GET['limit'])) {
   $data['limit'] = (int)$_GET['limit']; // just cast it as an int to normalize it
   $limit = (int)$_GET['limit'];
+} else {
+  $limit = null;
 }
 
 // If the user is logged in, proceed.  Otherwise, show the login screen.
@@ -49,15 +50,15 @@ if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true")
   // Tells the template to show the content instead of the login page
   $data['user_info'] = true;
 
-  $countArray = loadAwardCountByDate($am, $startDate, $endDate);
-  $data['chartDataString'] = buildRegionGraphData($countArray);
+  $countArray = loadAwardCountByRecipient($am, $startDate, $endDate, $limit);
+  $data['chartDataString'] = buildRecipientGraphData($countArray);
 
   // Set the display title of the page
-  $data['page_title'] = 'Reports - Awards By Date';
+  $data['page_title'] = 'Reports - Top Receipients by Awards Received';
 } else {
   $data['page_title'] = 'Log In';
 }
-$data['title'] = 'Project Phoenix - Reports - Awards By Date';
+$data['title'] = 'Project Phoenix - Reports - Awards By Region';
 
 // Pass the resulting data into the template
 echo $tpl->render($data);
@@ -68,11 +69,12 @@ echo $tpl->render($data);
 * @param DateTime (optional) - End Date
 * return Array counts by region
 */
-function loadAwardCountByDate($awardManager, $startDate = null, $endDate = null) {
-  $awardCountArray = $awardManager->getAwardCountByDate($startDate, $endDate);
+function loadAwardCountByRecipient($awardManager, $startDate = null, $endDate = null, $limit=null) {
+  $awardCountArray = $awardManager->getAwardCountByRecipient($startDate, $endDate);
   if(empty($awardCountArray)) {
     return null;
   }
+
   return $awardCountArray;
 }
 
@@ -82,15 +84,15 @@ function loadAwardCountByDate($awardManager, $startDate = null, $endDate = null)
 * @return String Formatted data string for Google Graphs
 */
 
-function buildRegionGraphData($countArray) {
+function buildRecipientGraphData($countArray) {
 
   // Label the graph elements
-  $graphData = "['Date', 'Awards Granted']";
+  $graphData = "['Granter', 'Awards Granted']";
 
   // Build the array string
   for($i = 0; $i < sizeof($countArray); $i++) {
-    $awardDate = $countArray[$i];
-    $graphData .= ",['" .$awardDate['grantDate'] . "'," . $awardDate['total'] . "]";
+    $region = $countArray[$i];
+    $graphData .= ",['" . $region['firstName'] . " " . $region['lastName'] . "'," . $region['awardCount'] . "]";
   }
 
   return $graphData;

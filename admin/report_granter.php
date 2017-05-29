@@ -1,12 +1,11 @@
 <?php
 ini_set('display_errors', 'On');
 
-require_once(__DIR__ . "/config/client/config.php");
-require_once(__DIR__ . "/db/src/Award.php");
-require_once(__DIR__ . "/db/AwardManager.php");
-require_once(__DIR__ . "/db/src/User.php");
-require_once(__DIR__ . "/db/UserManager.php");
-require_once(__DIR__ . "/lib/CertGenerator.php");
+require_once(__DIR__ . "/../config/admin/config.php");
+require_once(__DIR__ . "/../db/src/Award.php");
+require_once(__DIR__ . "/../db/AwardManager.php");
+require_once(__DIR__ . "/../db/src/User.php");
+require_once(__DIR__ . "/../db/UserManager.php");
 
 // Set up doctrine objects
 $emf = new EntityManagerFactory();
@@ -15,7 +14,7 @@ $um = new UserManager($em);
 $am = new AwardManager($em);
 
 // Setup the template engine
-require($_SERVER['DOCUMENT_ROOT'] . '/config/client/mustache.php');
+require($_SERVER['DOCUMENT_ROOT'] . '/config/admin/mustache.php');
 $tpl = $mustache->loadTemplate('report_granter');
 $data = array();  // Output for display by the template engine
 
@@ -53,7 +52,7 @@ if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true")
   $data['chartDataString'] = buildRegionGraphData($countArray);
 
   // Set the display title of the page
-  $data['page_title'] = 'Reports - Awards By Region';
+  $data['page_title'] = 'Reports - Awards By Granter';
 } else {
   $data['page_title'] = 'Log In';
 }
