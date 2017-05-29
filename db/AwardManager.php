@@ -31,6 +31,52 @@ class AwardManager {
     return $result[0][1];
   }
 
+  /**
+  * Returns an array of award counts by date
+  * @param DateTime $startDate
+  * @param DateTime $endDate
+  * @return Array array of regions and counts
+  */
+  public function getAwardCountByDate($startDate = null, $endDate = null) {
+
+    $queryString = "SELECT DATE(a.grantDate) AS grantDate,
+                      COUNT(a.id) AS total
+                    FROM Award a
+    ";
+
+    if(!empty($startDate) || !empty($endDate)) {
+      $queryString .= " WHERE ";
+    }
+
+    if(!empty($startDate)) {
+      $queryString .= " a.grantDate > :startDate";
+    }
+
+    if(!empty($startDate) && !empty($endDate)) {
+      $queryString .= " AND ";
+    }
+
+    if(!empty($endDate)) {
+      $queryString .= " a.grantDate < :endDate";
+    }
+
+    $queryString .= " GROUP BY grantDate";
+
+    $query = $this->em->createQuery($queryString);
+
+    if(!empty($startDate)) {
+      $query->setParameter('startDate', $startDate);
+    }
+
+    if(!empty($endDate)) {
+      $query->setParameter('endDate', $endDate);
+    }
+
+    $result = $query->getResult();
+
+    return $result;
+  }
+
 
   /**
   * Returns a count of awards by the user that granted them
