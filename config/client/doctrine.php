@@ -22,7 +22,7 @@ class EntityManagerFactory
     // Database configuration pg_parameter_status
     // TODO: Setup different accounts for client and admin on the database w/ appropriate perms.
     $connectionParams = array(
-      'url' => 'mysql://root:root@127.0.0.1:8889/phoenix_admin'
+      'url' => 'mysql://root:root@localhost:8889/phoenix_admin'
     );
 
     $this->entityManager = EntityManager::create($connectionParams, $config);
