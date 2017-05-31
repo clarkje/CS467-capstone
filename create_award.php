@@ -36,6 +36,7 @@ if (isset($_GET['offset'])) {
 
 // If the user is logged in, proceed.  Otherwise, show the login screen.
 if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true") {
+  $data['award'] = handleFormInput($am, $um);
   $data['awards'] = loadAllAwards($am, $um, $orderBy, $itemsPerPage, $offset);
   $data['user'] = loadUserData($um);
   $data['user_info'] = true;
@@ -168,7 +169,6 @@ function handleFormInput($am, $um) {
         $grantDate = $award->getGrantDate()->format('m/d/Y');
         $data['grantDate'] = $grantDate;
         $data['certURL'] = $award->getCertURL();
-
         return $data;
       break;
       case "doUpdate":

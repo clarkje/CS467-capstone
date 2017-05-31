@@ -25,7 +25,9 @@ class EntityManagerFactory
       'url' => 'mysql://root:root@localhost:8889/phoenix_admin'
     );
 
+    $config = Setup::createAnnotationMetadataConfiguration(array($GLOBALS['DOCUMENT_ROOT'] . "/db/src"), $isDevMode);
     $this->entityManager = EntityManager::create($connectionParams, $config);
+
   }
 
   public function getEntityManager() {
