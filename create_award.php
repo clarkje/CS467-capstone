@@ -2,17 +2,19 @@
 ini_set('display_errors', 'On');
 
 require_once(__DIR__ . "/config/client/config.php");
-require_once(__DIR__ . "/db/src/Award.php");
+require_once(__DIR__ . "/db/AddressManager.php");
 require_once(__DIR__ . "/db/AwardManager.php");
-require_once(__DIR__ . "/db/src/User.php");
+require_once(__DIR__ . "/db/CountryManager.php");
 require_once(__DIR__ . "/db/UserManager.php");
 require_once(__DIR__ . "/lib/CertGenerator.php");
 
 // Set up doctrine objects
 $emf = new EntityManagerFactory();
-$em = $emf->getEntityManager();
-$um = new UserManager($em);
-$am = new AwardManager($em);
+$entityManager = $emf->getEntityManager();
+$userManager = new UserManager($entityManager);
+$awardManager = new AwardManager($entityManager);
+$addressManager = new AddressManager($entityManager);
+$countryManager = new CountryManager($entityManager);
 
 // Setup the template engine
 require($_SERVER['DOCUMENT_ROOT'] . '/config/client/mustache.php');
@@ -33,9 +35,10 @@ if (isset($_GET['offset'])) {
 
 // If the user is logged in, proceed.  Otherwise, show the login screen.
 if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true") {
-  $data['award'] = handleFormInput($am, $um);
-  $data['awards'] = loadAllAwards($am, $um, $orderBy, $itemsPerPage, $offset);
-  $data['user'] = loadUserData($um);
+  $data['award'] = handleFormInput($awardManager, $userManager, $addressManager, $countryManager);
+  $data['addressOptions'] = $data['award']['addressOptions'];
+  $data['awards'] = loadAllAwards($awardManager, $userManager, $orderBy, $itemsPerPage, $offset);
+  $data['user'] = loadUserData($userManager);
   $data['user_info'] = true;
   $data['page_title'] = 'Create Award';
   $data['awardType'] = array(array('id'=>"1", 'label'=>"Generic Award"));
@@ -43,22 +46,22 @@ if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true")
   $data['page_title'] = 'Log In';
 }
 $data['title'] = 'Project Phoenix - Employee Recognition System';
-$data['pagination'] = createPagination($am->getAwardCount(), $offset, $itemsPerPage);
+$data['pagination'] = createPagination($awardManager->getAwardCount(), $offset, $itemsPerPage);
 
 // Pass the resulting data into the template
 echo $tpl->render($data);
 
 /**
-* @param AwardManager $am
-* @param UserManager $um
+* @param AwardManager $awardManager
+* @param UserManager $userManager
 * @param String $orderBy default = null
 * @param int $limit - number of records to return
 * @param int $offset - offset of record window
 * @return Array data for display
 */
-function loadAllAwards($am, $um, $orderBy = null, $limit = null, $offset = null) {
+function loadAllAwards($awardManager, $userManager, $orderBy = null, $limit = null, $offset = null) {
 
-  $loadedAwards = $am->loadAll($orderBy, $limit, $offset);
+  $loadedAwards = $awardManager->loadAll($orderBy, $limit, $offset);
   if(empty($loadedAwards)) {
     return null;
   }
@@ -86,14 +89,14 @@ function loadAllAwards($am, $um, $orderBy = null, $limit = null, $offset = null)
 }
 
 /**
-* @param UserManager $um
+* @param UserManager $userManager
 * @return Array data for display
 */
-function loadUserData($um) {
+function loadUserData($userManager) {
 
   // Load user data from the session
   try {
-    $user = $um->load($_SESSION['id']);
+    $user = $userManager->load($_SESSION['id']);
   } catch (Exception $e) {
     $data['error'] = "An error has occurred.  The object could not be retrieved.";
   }
@@ -109,18 +112,18 @@ function loadUserData($um) {
 
 
 /**
-* @param AwardManager $am
-* @param UserManager $um
+* @param AwardManager $awardManager
+* @param UserManager $userManager
 * @return Array data for display
 **/
-function handleFormInput($am, $um) {
+function handleFormInput($awardManager, $userManager, $addressManager, $countryManager) {
 
   if(isset($_POST['action'])) {
     switch($_POST['action']) {
       case "add":
 
         // Doctrine wants the actual user object and not the ID
-        $user = $um->load($_POST['granterId']);
+        $user = $userManager->load($_POST['granterId']);
 
         $award = new Award();
         $award->setRecipientFirst($_POST['recipientFirst']);
@@ -130,7 +133,7 @@ function handleFormInput($am, $um) {
         $award->setGrantDate(new DateTime($_POST['grantDate']));
 
         try {
-          $am->store($award);
+          $awardManager->store($award);
         } catch (Exception $e) {
           $data['error'] = "An error has occurred.  The operation could not be completed.";
           break;
@@ -154,7 +157,7 @@ function handleFormInput($am, $um) {
         return $data;
       break;
       case "update":
-        $award = $am->load($_POST['id']);
+        $award = $awardManager->load($_POST['id']);
 
         $data['id'] = $award->getId();
         $data['recipientEmail'] = $award->getRecipientEmail();
@@ -165,10 +168,15 @@ function handleFormInput($am, $um) {
         $grantDate = $award->getGrantDate()->format('m/d/Y');
         $data['grantDate'] = $grantDate;
         $data['certURL'] = $award->getCertURL();
+
+        $address = $award->getRecipientAddress();
+        $country = $address->getCountry();
+        $data['addressOptions'] = createAddressOptions($addressManager, $address->getId());
+        $data['countryOptions'] = createCountryOptions($countryManager, $country->getId());
         return $data;
       break;
       case "doUpdate":
-        $award = $am->load($_POST['id']);
+        $award = $awardManager->load($_POST['id']);
         $award->setRecipientFirst($_POST['recipientFirst']);
         $award->setRecipientLast($_POST['recipientLast']);
         $award->setRecipientEmail($_POST['recipientEmail']);
@@ -177,7 +185,7 @@ function handleFormInput($am, $um) {
           $grantDate = DateTime::createFromFormat('m/d/Y', $_POST['grantDate']);
           $award->setGrantDate($grantDate);
         }
-        $am->store($award);
+        $awardManager->store($award);
 
         $data['id'] = $award->getId();
         $data['recipientEmail'] = $award->getRecipientEmail();
@@ -187,17 +195,63 @@ function handleFormInput($am, $um) {
         $grantDate = $award->getGrantDate()->format('m/d/Y');
         $data['grantDate'] = $grantDate;
         $data['certURL'] = $award->getCertURL();
-
         return $data;
       break;
       case "delete":
-        $admin = $am->load($_POST['id']);
-        $am->delete($admin);
+        $addressManagerin = $awardManager->load($_POST['id']);
+        $awardManager->delete($addressManagerin);
         $data['deleted'] = true;
         return $data;
       break;
     }
   }
+}
+
+/**
+* Creates a set of country option elements for display by the template engine
+* @param countryManager
+* @param int (optional) ID of address to mark selected
+* @return string prepared HTML select options for template engine
+*/
+
+function createCountryOptions($countryManager, $countryId=null) {
+
+  $output = "";
+  $countries = $countryManager->loadAll(array('name' => 'ASC'));
+  foreach($countries as $country) {
+    $output .= "<option value='" . $country->getId() . "'";
+    if($countryId == $country->getId()) {
+      $output .= " selected ";
+    }
+    $output .= ">";
+    $output .= $country->getName();
+    $output .= "</option>";
+  }
+  return $output;
+}
+
+/**
+* Creates a set of address option elements for display by the template engine
+* @param addressManager
+* @param int (optional) ID of address to mark selected
+* @return string prepared HTML select options for template engine
+*/
+function createAddressOptions($addressManager, $addressId = null) {
+  $output = "";
+  $addresses = $addressManager->loadAll(array('description' => 'ASC'));
+
+  foreach($addresses as $addressEntry) {
+    $output .= "<option value='" . $addressEntry->getId() . "'";
+    if($addressId == $addressEntry->getId()) {
+      $output .= " selected ";
+    }
+    $output .=">";
+
+    $output .= $addressEntry->getDescription();
+    $output .= "</option>";
+  }
+
+  return $output;
 }
 
 /**

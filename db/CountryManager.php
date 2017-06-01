@@ -22,10 +22,13 @@ class CountryManager {
   }
 
   /**
+  * Returns an array of all Countries
+  * @param Array (optional) Array of column to sort by and direction
+  * example: array('name' => 'ASC')
   * @return Array of Countries
   */
-  public function loadAll() {
-    return $this->em->getRepository('Country')->findAll();
+  public function loadAll($sort = null) {
+    return $this->em->getRepository('Country')->findBy(array(),$sort);
   }
 
   /**

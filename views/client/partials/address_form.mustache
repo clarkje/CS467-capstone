@@ -1,0 +1,71 @@
+    <hr/>
+
+    <div class="form-group">
+      <label>Recipient Address:</label>
+      <select class="form-control" name="address_id" id="addressId" onchange="toggleAddressForm()">
+        <option value="">+ Create New Address</option>
+        {{{award.addressOptions}}}
+      </select>
+    </div>
+
+
+    <script>
+      // Adapted from code at:
+      // https://stackoverflow.com/questions/18568736/how-to-hide-element-using-twitter-bootstrap-3-and-show-it-using-jquery
+      // https://stackoverflow.com/questions/23873005/hide-div-by-default-and-show-it-on-click-with-bootstrap
+      // https://stackoverflow.com/questions/11179406/jquery-get-value-of-select-onchange
+      function toggleAddressForm() {
+        if( $("#addressId").val() != "") {
+          $("#addressForm").collapse('hide');
+        } else {
+          $("#addressForm").collapse('show');
+        }
+      }
+      $("addressId").change(toggleAddressForm());
+    </script>
+
+    <div id="addressForm" class="collapse">
+
+      <div class="form-group">
+        <label>Address Description</label>
+        <input class="form-control" name="address_description" value="{{address.description}}">
+      </div>
+
+      <div class="form-group">
+        <label>Address 1</label>
+        <input class="form-control" name="address_address1" value="{{address.address1}}">
+      </div>
+
+      <div class="form-group">
+        <label>Address 2</label>
+        <input class="form-control" name="address_address2" value="{{address.address2}}">
+      </div>
+
+      <div class="form-group">
+        <label>Address 3</label>
+        <input class="form-control" name="address_address2" value="{{address.address3}}">
+      </div>
+
+      <div class="form-group">
+        <label>City</label>
+        <input class="form-control" name="address_city" value="{{address.city}}">
+      </div>
+
+      <div class="form-group">
+        <label>State</label>
+        <input class="form-control" name="address_state" value="{{address.state}}">
+      </div>
+
+      <div class="form-group">
+        <label>Zipcode</label>
+        <input class="form-control" name="address_zipcode" value="{{address.zipcode}}">
+      </div>
+
+      <div class="form-group">
+        <label>Country</label>
+        <select class="form-control" name="address_country">
+          {{{award.countryOptions}}}
+        </select>
+      </div>
+
+    </div>

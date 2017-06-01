@@ -144,6 +144,15 @@ class Award {
     return $this->certPath;
   }
 
+  /**
+  * Returns the associated Address object
+  * @return Address
+  */
+  public function getAddress() {
+    return $this->address;
+  }
+
+
   public function __construct() {
 
     // In this instance, we need to create and parse a .tex file to Output
