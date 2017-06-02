@@ -1,28 +1,17 @@
     <hr/>
 
     <div class="form-group">
-      <label>Recipient Address:</label>
-      <select class="form-control" name="address_id" id="addressId" onchange="toggleAddressForm()">
-        <option value="">+ Create New Address</option>
-        {{{award.addressOptions}}}
-      </select>
+      <div class="form-group" id="existingAddress">
+        <label>Recipient Address:</label>
+        <select class="form-control" name="address_id" id="addressId">
+          <option value="">-- Choose Existing Address --</option>
+          {{{award.addressOptions}}}
+        </select>
+      </div>
+
+      <a class="btn btn-primary" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="addressForm" data-target="#addressForm">Create New Address</a>
     </div>
 
-
-    <script>
-      // Adapted from code at:
-      // https://stackoverflow.com/questions/18568736/how-to-hide-element-using-twitter-bootstrap-3-and-show-it-using-jquery
-      // https://stackoverflow.com/questions/23873005/hide-div-by-default-and-show-it-on-click-with-bootstrap
-      // https://stackoverflow.com/questions/11179406/jquery-get-value-of-select-onchange
-      function toggleAddressForm() {
-        if( $("#addressId").val() != "") {
-          $("#addressForm").collapse('hide');
-        } else {
-          $("#addressForm").collapse('show');
-        }
-      }
-      $("addressId").change(toggleAddressForm());
-    </script>
 
     <div id="addressForm" class="collapse">
 
@@ -64,8 +53,9 @@
       <div class="form-group">
         <label>Country</label>
         <select class="form-control" name="address_country">
-          {{{award.countryOptions}}}
+          {{#countries}}
+            <option value="{{id}}">{{name}}</option>
+          {{/countries}}
         </select>
       </div>
-
     </div>
