@@ -3,14 +3,13 @@
 // Based on Doctrine tutorial, here:
 // http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/configuration.html
 use Doctrine\ORM\Tools\Setup;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
 use Doctrine\ORM\Query\Lexer;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
+use Doctrine\ORM\EntityManager;
 
 require_once(__DIR__ . "/../config.php");
-
 
 // Borrowed From:
 // https://stackoverflow.com/questions/33899120/symfony-doctrine-get-entries-count-by-day-on-a-datetime-field

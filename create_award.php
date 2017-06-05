@@ -2,17 +2,21 @@
 ini_set('display_errors', 'On');
 
 require_once(__DIR__ . "/config/client/config.php");
-require_once(__DIR__ . "/db/src/Award.php");
+require_once(__DIR__ . "/db/AddressManager.php");
 require_once(__DIR__ . "/db/AwardManager.php");
-require_once(__DIR__ . "/db/src/User.php");
+require_once(__DIR__ . "/db/AwardTypeManager.php");
+require_once(__DIR__ . "/db/CountryManager.php");
 require_once(__DIR__ . "/db/UserManager.php");
 require_once(__DIR__ . "/lib/CertGenerator.php");
 
 // Set up doctrine objects
 $emf = new EntityManagerFactory();
-$em = $emf->getEntityManager();
-$um = new UserManager($em);
-$am = new AwardManager($em);
+$entityManager = $emf->getEntityManager();
+$userManager = new UserManager($entityManager);
+$awardManager = new AwardManager($entityManager);
+$awardTypeManager = new AwardTypeManager($entityManager);
+$addressManager = new AddressManager($entityManager);
+$countryManager = new CountryManager($entityManager);
 
 // Setup the template engine
 require($_SERVER['DOCUMENT_ROOT'] . '/config/client/mustache.php');
@@ -36,33 +40,46 @@ if (isset($_GET['offset'])) {
 
 // If the user is logged in, proceed.  Otherwise, show the login screen.
 if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true") {
-  $data['award'] = handleFormInput($am, $um);
-  $data['awards'] = loadAllAwards($am, $um, $orderBy, $itemsPerPage, $offset);
-  $data['user'] = loadUserData($um);
+
+  $data['award'] = handleFormInput($awardManager, $awardTypeManager, $userManager, $addressManager, $countryManager);
+
+  // If we're just coming to the create award page fresh, create a default list of address options from the pulldown
+  if(!isset($_POST['action'])) {
+    $data['award']['addressOptions'] = createAddressOptions($addressManager);
+  }
+
+  $data['awards'] = loadAllAwards($awardManager, $awardTypeManager, $userManager, array('id'=>'DESC'), $itemsPerPage, $offset);
+  $data['user'] = loadUserData($userManager);
   $data['user_info'] = true;
   $data['page_title'] = 'Create Award';
   $data['awardType'] = array(array('id'=>"1", 'label'=>"Generic Award"));
+
+  $countries = $countryManager->loadAll(array('name'=>'ASC'));
+  foreach($countries AS $country) {
+    $data['countries'][] = array("name"=>$country->getName(), "id"=>$country->getId());
+  }
+
 } else {
   $data['page_title'] = 'Log In';
 }
 $data['title'] = 'Project Phoenix - Employee Recognition System';
-$data['pagination'] = createPagination($am->getAwardCount(), $offset, $itemsPerPage);
+$data['pagination'] = createPagination($awardManager->getAwardCount(), $offset, $itemsPerPage);
 
 
 // Pass the resulting data into the template
 echo $tpl->render($data);
 
 /**
-* @param AwardManager $am
-* @param UserManager $um
+* @param AwardManager $awardManager
+* @param UserManager $userManager
 * @param String $orderBy default = null
 * @param int $limit - number of records to return
 * @param int $offset - offset of record window
 * @return Array data for display
 */
-function loadAllAwards($am, $um, $orderBy = null, $limit = null, $offset = null) {
+function loadAllAwards($awardManager, $awardTypeManager, $userManager, $orderBy = null, $limit = null, $offset = null) {
 
-  $loadedAwards = $am->loadAll($orderBy, $limit, $offset);
+  $loadedAwards = $awardManager->loadAll($orderBy, $limit, $offset);
   if(empty($loadedAwards)) {
     return null;
   }
@@ -90,14 +107,14 @@ function loadAllAwards($am, $um, $orderBy = null, $limit = null, $offset = null)
 }
 
 /**
-* @param UserManager $um
+* @param UserManager $userManager
 * @return Array data for display
 */
-function loadUserData($um) {
+function loadUserData($userManager) {
 
   // Load user data from the session
   try {
-    $user = $um->load($_SESSION['id']);
+    $user = $userManager->load($_SESSION['id']);
   } catch (Exception $e) {
     $data['error'] = "An error has occurred.  The object could not be retrieved.";
   }
@@ -113,29 +130,67 @@ function loadUserData($um) {
 
 
 /**
-* @param AwardManager $am
-* @param UserManager $um
+* @param AwardManager $awardManager
+* @param UserManager $userManager
 * @return Array data for display
 **/
-function handleFormInput($am, $um) {
+function handleFormInput($awardManager, $awardTypeManager, $userManager, $addressManager, $countryManager) {
 
   if(isset($_POST['action'])) {
     switch($_POST['action']) {
       case "add":
 
         // Doctrine wants the actual user object and not the ID
-        $user = $um->load($_POST['granterId']);
+        $user = $userManager->load($_POST['granterId']);
 
         $award = new Award();
+
+        // Deal with the address
+        if(!isset($_POST['address_id']) || $_POST['address_id'] == "") {
+          // User created a new address
+          $country = $countryManager->load($_POST['address_country']);
+
+          $address = new Address();
+          if(isset($_POST['address_description'])) {
+            $address->setDescription($_POST['address_description']);
+          }
+          if(isset($_POST['address_address1'])) {
+            $address->setAddress1($_POST['address_address1']);
+          }
+          if(isset($_POST['address_address2'])) {
+            $address->setAddress2($_POST['address_address2']);
+          }
+          if(isset($_POST['address_address3'])) {
+            $address->setAddress3($_POST['address_address3']);
+          }
+          if(isset($_POST['address_city'])) {
+            $address->setCity($_POST['address_city']);
+          }
+          if(isset($_POST['address_state'])) {
+            $address->setState($_POST['address_state']);
+          }
+          if(isset($_POST['address_zipcode'])) {
+            $address->setZipcode($_POST['address_zipcode']);
+          }
+          if(isset($_POST['address_country'])) {
+            $address->setCountry($country);
+          }
+        } else {
+          $address = $addressManager->load($_POST['address_id']);
+        }
+        $award->setRecipientAddress($address);
         $award->setRecipientFirst($_POST['recipientFirst']);
         $award->setRecipientLast($_POST['recipientLast']);
         $award->setRecipientEmail($_POST['recipientEmail']);
+        $awardType = $awardTypeManager->load($_POST['awardType']);
+        $award->setAwardType($awardType);
         $award->setGranter($user);
         $award->setGrantDate(new DateTime($_POST['grantDate']));
 
         try {
-          $am->store($award);
+          $awardManager->store($award);
         } catch (Exception $e) {
+          var_dump($e);
           $data['error'] = "An error has occurred.  The operation could not be completed.";
           break;
         }
@@ -154,11 +209,10 @@ function handleFormInput($am, $um) {
         $cg->createCertificate($award);
 
         $data['certURL'] = $award->getCertURL();
-
         return $data;
       break;
       case "update":
-        $award = $am->load($_POST['id']);
+        $award = $awardManager->load($_POST['id']);
 
         $data['id'] = $award->getId();
         $data['recipientEmail'] = $award->getRecipientEmail();
@@ -169,19 +223,62 @@ function handleFormInput($am, $um) {
         $grantDate = $award->getGrantDate()->format('m/d/Y');
         $data['grantDate'] = $grantDate;
         $data['certURL'] = $award->getCertURL();
+
+        $address = $award->getRecipientAddress();
+        $country = $address->getCountry();
+        $data['addressOptions'] = createAddressOptions($addressManager, $address->getId());
         return $data;
       break;
       case "doUpdate":
-        $award = $am->load($_POST['id']);
+        $award = $awardManager->load($_POST['id']);
         $award->setRecipientFirst($_POST['recipientFirst']);
         $award->setRecipientLast($_POST['recipientLast']);
         $award->setRecipientEmail($_POST['recipientEmail']);
-        $award->setAwardType($_POST['awardType']);
+
+        $awardType = $awardTypeManager->load($_POST['awardType']);
+        $award->setAwardType($awardType);
+
+        // Deal with the address
+        if(!isset($_POST['address_id']) || $_POST['address_id'] == "") {
+
+          // User created a new address
+          $country = $countryManager->load($_POST['address_country']);
+
+          $address = new Address();
+          if(isset($_POST['address_description'])) {
+            $address->setDescription($_POST['address_description']);
+          }
+          if(isset($_POST['address_address1'])) {
+            $address->setAddress1($_POST['address_address1']);
+          }
+          if(isset($_POST['address_address2'])) {
+            $address->setAddress2($_POST['address_address2']);
+          }
+          if(isset($_POST['address_address3'])) {
+            $address->setAddress3($_POST['address_address3']);
+          }
+          if(isset($_POST['address_city'])) {
+            $address->setCity($_POST['address_city']);
+          }
+          if(isset($_POST['address_state'])) {
+            $address->setState($_POST['address_state']);
+          }
+          if(isset($_POST['address_zipcode'])) {
+            $address->setZipcode($_POST['address_zipcode']);
+          }
+          if(isset($_POST['address_country'])) {
+            $address->setCountry($country);
+          }
+        } else {
+          $address = $addressManager->load($_POST['address_id']);
+        }
+        $award->setRecipientAddress($address);
+
         if($_POST['grantDate']) {
           $grantDate = DateTime::createFromFormat('m/d/Y', $_POST['grantDate']);
           $award->setGrantDate($grantDate);
         }
-        $am->store($award);
+        $awardManager->store($award);
 
         $data['id'] = $award->getId();
         $data['recipientEmail'] = $award->getRecipientEmail();
@@ -191,17 +288,41 @@ function handleFormInput($am, $um) {
         $grantDate = $award->getGrantDate()->format('m/d/Y');
         $data['grantDate'] = $grantDate;
         $data['certURL'] = $award->getCertURL();
-
+        $data['addressOptions'] = createAddressOptions($addressManager, $address->getId());
         return $data;
       break;
       case "delete":
-        $admin = $am->load($_POST['id']);
-        $am->delete($admin);
+        $addressManagerin = $awardManager->load($_POST['id']);
+        $awardManager->delete($award);
         $data['deleted'] = true;
         return $data;
       break;
     }
   }
+}
+
+/**
+* Creates a set of address option elements for display by the template engine
+* @param addressManager
+* @param int (optional) ID of address to mark selected
+* @return string prepared HTML select options for template engine
+*/
+function createAddressOptions($addressManager, $addressId = null) {
+  $output = "";
+  $addresses = $addressManager->loadAll(array('description' => 'ASC'));
+
+  foreach($addresses as $addressEntry) {
+    $output .= "<option value='" . $addressEntry->getId() . "'";
+    if($addressId == $addressEntry->getId()) {
+      $output .= " selected ";
+    }
+    $output .=">";
+
+    $output .= $addressEntry->getDescription();
+    $output .= "</option>";
+  }
+
+  return $output;
 }
 
 /**

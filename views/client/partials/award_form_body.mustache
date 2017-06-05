@@ -2,14 +2,14 @@
 {{#award.added}}
 <!-- Added a user successfully -->
 <div class="alert alert-success">
-  Admin Added Successfully
+  Award Added Successfully
 </div>
 {{/award.added}}
 
 {{#award.updated}}
 <!-- Updated a user successfully -->
 <div class="alert alert-success">
-  Admin Updated Succssfully
+  Award Updated Succssfully
 </div>
 {{/award.updated}}
 
@@ -50,7 +50,7 @@
     </div>
 
     <label>Grant Date</label>
-    
+
     <div class="input-group date" data-provide="datepicker" data-date-autoclose="true">
       <input type="text" class="form-control" autoclose="true" name="grantDate" value="{{award.grantDate}}">
       <div class="input-group-addon">
@@ -58,6 +58,9 @@
       </div>
     </div>
 
+    {{>address_form}}
+
+    <hr>
     <div class="form-group">
       <button type="submit" class="btn btn-default" >{{^award.id}}Create{{/award.id}}{{#award.id}}Update{{/award.id}} Award</button>
       {{#admin.id}}<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmModal">Delete Award</button>{{/admin.id}}
@@ -65,8 +68,7 @@
     </div>
 </form>
 
-
-
+<hr>
 
 <!-- Modal Confirmation Dialog -->
 <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel">

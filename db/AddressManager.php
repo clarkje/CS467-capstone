@@ -22,10 +22,13 @@ class AddressManager {
   }
 
   /**
+  * Returns an array of all Addresses
+  * @param Array (optional) Array of column to sort by and direction
+  * example: array('description' -> 'DESC')
   * @return Array of Addresses
   */
-  public function loadAll() {
-    return $this->em->getRepository('Address')->findAll();
+  public function loadAll($sort = null) {
+    return $this->em->getRepository('Address')->findBy(array(),$sort);
   }
 
   /**

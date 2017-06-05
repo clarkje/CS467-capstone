@@ -1,6 +1,7 @@
     <hr/>
 
     <div class="form-group">
+<<<<<<< HEAD
       <label>Recipient Address:</label>
       <select class="form-control" name="address_id" id="addressId" onchange="toggleAddressForm()">
         <option value="">+ Create New Address</option>
@@ -23,6 +24,19 @@
       }
       $("addressId").change(toggleAddressForm());
     </script>
+=======
+      <div class="form-group" id="existingAddress">
+        <label>Recipient Address:</label>
+        <select class="form-control" name="address_id" id="addressId">
+          <option value="">-- Choose Existing Address --</option>
+          {{{award.addressOptions}}}
+        </select>
+      </div>
+
+      <a class="btn btn-primary" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="addressForm" data-target="#addressForm">Create New Address</a>
+    </div>
+
+>>>>>>> upstream/master
 
     <div id="addressForm" class="collapse">
 
@@ -64,8 +78,16 @@
       <div class="form-group">
         <label>Country</label>
         <select class="form-control" name="address_country">
+<<<<<<< HEAD
           {{{award.countryOptions}}}
         </select>
       </div>
 
+=======
+          {{#countries}}
+            <option value="{{id}}">{{name}}</option>
+          {{/countries}}
+        </select>
+      </div>
+>>>>>>> upstream/master
     </div>
