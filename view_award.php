@@ -4,6 +4,7 @@ ini_set('display_errors', 'On');
 require_once(__DIR__ . "/config/client/config.php");
 require_once(__DIR__ . "/db/src/Award.php");
 require_once(__DIR__ . "/db/AwardManager.php");
+require_once(__DIR__ . "/lib/CertGenerator.php");
 
 // Set up doctrine objects
 $emf = new EntityManagerFactory();
@@ -208,6 +209,10 @@ function loadAward($am, $id) {
   else {
     $data['certURL'] = "/cert_assets/not_found.png";
     $data['certType'] = "image/png";
+
+    // The Award object indicates that we've never generated a PDF, so let's kick that off.
+    $cg =  new CertGenerator();
+    $cg->createCertificate($award);
   }
 
   return $data;

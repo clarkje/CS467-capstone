@@ -15,6 +15,6 @@ function showPDF(){
   pdf.style.display = "inline-block";
 }
 
-myVar = setTimeout(removeSpinner, 4000);
+myVar = setTimeout(removeSpinner, 6500);
 
-pdf = setTimeout(showPDF, 2000);
+pdf = setTimeout(showPDF, 6000);

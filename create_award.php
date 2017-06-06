@@ -223,6 +223,7 @@ function handleFormInput($awardManager, $awardTypeManager, $userManager, $addres
         $address = $award->getRecipientAddress();
         $country = $address->getCountry();
         $data['addressOptions'] = createAddressOptions($addressManager, $address->getId());
+
         return $data;
       break;
       case "doUpdate":
@@ -285,6 +286,10 @@ function handleFormInput($awardManager, $awardTypeManager, $userManager, $addres
         $data['grantDate'] = $grantDate;
         $data['certURL'] = $award->getCertURL();
         $data['addressOptions'] = createAddressOptions($addressManager, $address->getId());
+
+        $cg =  new CertGenerator();
+        $cg->createCertificate($award);
+        
         return $data;
       break;
       case "delete":
