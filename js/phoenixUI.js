@@ -12,7 +12,7 @@ function removeSpinner(){
 function showPDF(){
   //change pdf display relative to ensure page layout does not chagne
   var pdf = document.getElementById("certificate");
-  document.getElementById('certificate').src = document.getElementById('iframeid').src
+  pdf.style.display = "inline-block";
 }
 
 myVar = setTimeout(removeSpinner, 6500);
