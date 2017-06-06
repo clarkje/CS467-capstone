@@ -59,7 +59,7 @@ class AdminDoctrineTest extends TestCase
     return self::$em;
   }
 
-
+  /*
   // Uncomment this to make a default administrator
   // TODO: Make a utility or something to do this.
   public function testMakeDefaultAdmin() {
@@ -69,7 +69,7 @@ class AdminDoctrineTest extends TestCase
     $admin->setPassword("password");
     $am->store($admin);
   }
-  
+  */
 
   public function testEmptyConstructor() {
     $admin = new Admin();

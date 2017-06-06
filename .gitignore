@@ -1,26 +1,7 @@
 .DS_STORE
-<<<<<<< HEAD
-<<<<<<< HEAD
 config/
 config/config.php
-=======
-config/clienttmp/
-config/admintmp/
-config/config.php
-configtmp/
->>>>>>> added form to create awards, generate tex file and pdf
-=======
-config/clienttmp/
-config/admintmp/
-config/config.php
-configtmp/
-=======
-config/
-config/config.php
->>>>>>> upstream/master
->>>>>>> origin/master
 vendor/
 composer.lock
 .imdone
 static/
-cli-config.php
