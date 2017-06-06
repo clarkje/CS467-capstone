@@ -13,6 +13,9 @@ require_once 'config/admin/doctrine.php';
 $emf = new EntityManagerFactory();
 $entityManager = $emf->getEntityManager();
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> upstream/master
 //return ConsoleRunner::createHelperSet($entityManager);
 return \Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet($entityManager);

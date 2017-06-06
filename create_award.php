@@ -23,6 +23,8 @@ require($_SERVER['DOCUMENT_ROOT'] . '/config/client/mustache.php');
 $tpl = $mustache->loadTemplate('create_award');
 $data = array();  // Output for display by the template engine
 
+<<<<<<< HEAD
+=======
 // Pagination parameters
 $orderBy = null;
 $offset = null;
@@ -34,6 +36,7 @@ if (isset($_GET['orderBy'])) {
 if (isset($_GET['offset'])) {
   $offset = $_GET['offset'];
 }
+>>>>>>> upstream/master
 
 // If the user is logged in, proceed.  Otherwise, show the login screen.
 if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true") {
@@ -61,6 +64,7 @@ if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true")
 }
 $data['title'] = 'Project Phoenix - Employee Recognition System';
 $data['pagination'] = createPagination($awardManager->getAwardCount(), $offset, $itemsPerPage);
+
 
 // Pass the resulting data into the template
 echo $tpl->render($data);

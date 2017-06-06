@@ -1,9 +1,18 @@
-<div>
+<div class="col-lg-6">
 <b>Award Recipient:</b> {{award.recipientFirst}} {{award.recipientLast}}<br>
 <b>Emailed To:</b> {{award.recipientEmail}}<br>
 <b>Award Granted:</b> {{award.grantDate}}<br>
 <b>Granted By:</b> {{award.granter}}<br>
 
 <a href="{{award.certURL}}" target="blank">View Certificate</a>
-  
+
+</div>
+<div class="col-lg-6" id="award-preview">
+  <div id="preview-wrapper">
+    <object data="{{award.certURL}}" width="400px" height="550px" type="{{award.certType}}" id="certificate">
+    </object>
+    <div id="spinner-wrapper">
+      <div class="spinner spinner1"></div>
+    </div>
+  </div>
 </div>
