@@ -201,22 +201,9 @@ function loadAward($am, $id) {
   $data['granter'] = $award->getGranter()->getFirstName() . " "
     . $award->getGranter()->getLastName();
 
-  if ($award->hasCert()){
-    $data['certURL'] = $award->getCertURL();
-    $data['certType'] = "application/pdf";
-  }
-  else {
-    $data['certURL'] = "/cert_assets/not_found.png";
-    $data['certType'] = "image/png";
-  }
+  $data['certURL'] = $award->getCertURL();
 
   return $data;
-}
-
-function loadCertificateHelper($award) {
-  if ($award->getCertURL() === null){
-
-  }
 }
 
 /**
