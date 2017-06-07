@@ -17,7 +17,7 @@ $tpl = $mustache->loadTemplate('admin_profile');
 
 // If the user is logged in, proceed.  Otherwise, show the login screen.
 if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true") {
-  $data = handleFormInput();
+  $data = handleFormInput($am);
   $data['user_info'] = true;
   $data['page_title'] = 'Update Profile';
 } else {
@@ -36,7 +36,9 @@ if(isset($_SESSION['email'])) {
 // Pass the resulting data into the template
 echo $tpl->render($data);
 
-function handleFormInput() {
+function handleFormInput($am) {
+
+  $data = array();
 
   // Process any form input
   if(isset($_POST['action'])) {
