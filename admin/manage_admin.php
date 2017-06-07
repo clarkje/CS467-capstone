@@ -80,6 +80,10 @@ function handleFormInput($am) {
         $data['created'] = $admin->getCreated();
         $data['updated'] = true;
       break;
+      case "delete":
+        $admin = $am->load($_POST['id']);
+        $am->delete($admin);
+        $data['deleted'] = true;
     }
     if(isset($data)) {
       return $data;
