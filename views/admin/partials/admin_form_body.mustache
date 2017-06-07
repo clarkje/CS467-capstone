@@ -22,7 +22,7 @@
 
 <form role="form" method="POST" action="/admin/manage_admin.php">
     {{#admin.id}}<input type="hidden" name="id" value="{{admin.id}}">{{/admin.id}}
-    <input type="hidden" name="action" value="{{#admin.id}}update{{/admin.id}}{{^admin.id}}add{{/admin.id}}">
+    <input type="hidden" name="action" value="{{#admin.id}}doUpdate{{/admin.id}}{{^admin.id}}add{{/admin.id}}">
 
     <div class="form-group">
       <label>Email</label>

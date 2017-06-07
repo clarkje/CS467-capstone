@@ -53,10 +53,9 @@ function handleFormInput($am) {
         $data['admin']['id'] = $admin->getId();
         $data['admin']['email'] = $admin->getEmail();
         $data['admin']['created'] = $admin->getCreated()->format('m-d-Y H:i:s');
+        $data['added'] = true;
       break;
       case "update":
-
-      //TODO: Update doesn't actually save anything
         try {
           // Load the provided admin from the database
           $admin = $am->load($_POST['id']);
@@ -68,6 +67,18 @@ function handleFormInput($am) {
         $data['admin']['id'] = $admin->getId();
         $data['admin']['email'] = $admin->getEmail();
         $data['admin']['created'] = $admin->getCreated()->format('m-d-Y h:i:s A');
+      break;
+      case "doUpdate":
+        $admin = $am->load($_POST['id']);
+        $admin->setEmail($_POST['email']);
+        if (isset($_POST['password']) && $_POST['password'] != "") {
+          $admin->setPassword($_POST['password']);
+        }
+        $am->store($admin);
+        $data['admin']['id'] = $admin->getId();
+        $data['admin']['email'] = $admin->getEmail();
+        $data['created'] = $admin->getCreated();
+        $data['updated'] = true;
       break;
     }
     if(isset($data)) {
