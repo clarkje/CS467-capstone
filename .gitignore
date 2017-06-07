@@ -1,9 +1,8 @@
 .DS_STORE
-config/
+config
+config/*
 config/config.php
 vendor/
 composer.lock
 .imdone
 static/
-
-config/config.php
