@@ -63,7 +63,8 @@ if(isset($_REQUEST['action'])) {
       $resetLink = "https://"
         . $GLOBALS['HOST_NAME']
         . "/admin/forgot_password.php?action=doReset&token="
-        . $admin->getResetHash();
+        . $admin->getResetHash()
+        . "&email=" . $admin->getEmail() . "\r\n";
 
       $to = $admin->getEmail();
       $subject = "Password Reset for Project Phoenix";
