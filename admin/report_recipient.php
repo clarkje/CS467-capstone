@@ -105,7 +105,7 @@ function loadAwardCountByRecipient($awardManager, $startDate = null, $endDate = 
 function buildRecipientGraphData($countArray) {
 
   // Label the graph elements
-  $graphData = "['Granter', 'Awards Granted']";
+  $graphData = "['Recipient', 'Awards Granted']";
 
   // Build the array string
   for($i = 0; $i < sizeof($countArray); $i++) {
