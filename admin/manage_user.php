@@ -96,6 +96,22 @@ function handleFormInput($um) {
         $data['user']['id'] = $user->getId();
         $data['user']['email'] = $user->getEmail();
         $data['user']['created'] = $user->getCreated()->format('m-d-Y H:i:s');
+      break;
+      case "doUpdate":
+        $user = $um->load($_POST['id']);
+        $user->setFirstName($_POST['firstName']);
+        $user->setLastName($_POST['lastName']);
+        $user->setEmail($_POST['email']);
+        echo("Setting Password: " . $_POST['password']);
+        $user->setPassword($_POST['password']);
+        $um->store($user);
+
+        $data['user']['firstName'] = $user->getFirstName();
+        $data['user']['lastName'] = $user->getLastName();
+        $data['user']['id'] = $user->getId();
+        $data['user']['email'] = $user->getEmail();
+        $data['user']['created'] = $user->getCreated()->format('m-d-Y H:i:s');
+
         $data['updated'] = true;
       break;
       case "delete":
