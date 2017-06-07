@@ -17,6 +17,7 @@ $tpl = $mustache->loadTemplate('admin_profile');
 
 // If the user is logged in, proceed.  Otherwise, show the login screen.
 if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true") {
+  $data = handleFormInput();
   $data['user_info'] = true;
   $data['page_title'] = 'Update Profile';
 } else {
@@ -32,26 +33,31 @@ if(isset($_SESSION['email'])) {
   $data['admin']['email'] = $_SESSION['email'];
 }
 
-// Process any form input
-if(isset($_POST['action'])) {
-  switch($_POST['action']) {
-    case "update":
-      try {
-        // Load the provided admin from the database
-        $admin = $am->load($_POST['id']);
-      } catch (Exception $e) {
-        $data['error'] = "An error has occurred.  The object could not be retrieved.";
-        break;
-      }
-      // Populate the data element for the template engine
-      $data['admin']['id'] = $admin->getId();
-      $data['admin']['email'] = $admin->getEmail();
-      // Show the successful update message in the UI
-      $data['updated'] = true;
-    break;
-  }
-}
-
 // Pass the resulting data into the template
 echo $tpl->render($data);
+
+function handleFormInput() {
+
+  // Process any form input
+  if(isset($_POST['action'])) {
+    switch($_POST['action']) {
+      case "update":
+        try {
+          // Load the provided admin from the database
+          $admin = $am->load($_POST['id']);
+        } catch (Exception $e) {
+          $data['error'] = "An error has occurred.  The object could not be retrieved.";
+          break;
+        }
+        // Populate the data element for the template engine
+        $data['admin']['id'] = $admin->getId();
+        $data['admin']['email'] = $admin->getEmail();
+        // Show the successful update message in the UI
+        $data['updated'] = true;
+      break;
+    }
+  }
+  return $data;
+}
+
 ?>
