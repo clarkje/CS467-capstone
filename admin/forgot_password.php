@@ -43,6 +43,7 @@ if(isset($_REQUEST['action'])) {
       // If we didn't get a hit on the specified email address
       if($admin == NULL) {
         $data['error'] = "Password could not be reset for supplied email address. Contact an admin for assistance.";
+        break;
       }
 
       // Generate a password reset token
