@@ -53,7 +53,7 @@ function handleFormInput($um) {
       case "update":
 
         // If there's a file present, handle it
-        if (!empty($_FILES)) {
+        if (!empty($_FILES) && $_FILES['signatureFile']['size'] > 128) {
           if(!$user->setSignature($_FILES['signatureFile']['tmp_name'])) {
             $data['error'] = "An error has occurred.  The signature file could not be saved.";
           }
