@@ -29,7 +29,7 @@
 
 <form role="form" method="POST" action="/admin/manage_user.php">
   {{#user.id}}<input type="hidden" name="id" value="{{user.id}}">{{/user.id}}
-  <input type="hidden" name="action" value="{{#user.id}}update{{/user.id}}{{^user.id}}add{{/user.id}}">
+  <input type="hidden" name="action" value="{{#user.id}}doUpdate{{/user.id}}{{^user.id}}add{{/user.id}}">
 
   <div class="form-group">
     <label>First Name</label>
