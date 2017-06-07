@@ -61,7 +61,7 @@ if(isset($_REQUEST['action'])) {
       // vs. having it embedded in the business logic.
 
       $resetLink = "https://"
-        . $GLOBALS['HOSTNAME']
+        . $GLOBALS['HOST_NAME']
         . "/admin/forgot_password.php?action=doReset&token="
         . $admin->getResetHash();
 
