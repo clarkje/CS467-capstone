@@ -27,17 +27,17 @@
 
     <div class="form-group">
       <label>Recipient First Name</label>
-      <input class="form-control" name="recipientFirst" value="{{award.recipientFirst}}">
+      <input class="form-control" name="recipientFirst" value="{{award.recipientFirst}}" required>
     </div>
 
     <div class="form-group">
       <label>Recipient Last Name</label>
-      <input class="form-control" name="recipientLast" value="{{award.recipientLast}}">
+      <input class="form-control" name="recipientLast" value="{{award.recipientLast}}" required>
     </div>
 
     <div class="form-group">
       <label>Recipient Email</label>
-      <input class="form-control" name="recipientEmail" value="{{award.recipientEmail}}">
+      <input class="form-control" name="recipientEmail" value="{{award.recipientEmail}}" required>
     </div>
 
     <div class="form-group">
@@ -50,7 +50,7 @@
     <label>Grant Date</label>
 
     <div class="input-group date" data-provide="datepicker" data-date-autoclose="true">
-      <input type="text" class="form-control" autoclose="true" name="grantDate" value="{{award.grantDate}}">
+      <input type="text" class="form-control" autoclose="true" name="grantDate" value="{{award.grantDate}}" required>
       <div class="input-group-addon">
         <span class="glyphicon glyphicon-th"></span>
       </div>
