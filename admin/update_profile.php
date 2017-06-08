@@ -68,6 +68,10 @@ function handleFormInput($am) {
         // Show the successful update message in the UI
         $data['updated'] = true;
       break;
+      case "delete":
+        $admin = $am->load($_POST['id']);
+        $am->delete($admin);
+      break;
     }
   }
   return $data;

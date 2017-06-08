@@ -46,7 +46,7 @@ if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true")
     $data['award']['awardType'] = createAwardTypeOptions($awardTypeManager);
   }
 
-  $data['awards'] = loadAllAwards($awardManager, $awardTypeManager, $userManager, $_SESSION['id'], array('id'=>'DESC'), $itemsPerPage, $offset);
+  $data['awards'] = loadAllAwards($awardManager, $awardTypeManager, $userManager, $_SESSION['id'], array('grantDate'=>'DESC'), $itemsPerPage, $offset);
   $data['user'] = loadUserData($userManager);
   $data['user_info'] = true;
   $data['page_title'] = 'Create Award';
@@ -299,7 +299,7 @@ function handleFormInput($awardManager, $awardTypeManager, $userManager, $addres
         return $data;
       break;
       case "delete":
-        $addressManagerin = $awardManager->load($_POST['id']);
+        $award = $awardManager->load($_POST['id']);
         $awardManager->delete($award);
         $data['deleted'] = true;
         return $data;
