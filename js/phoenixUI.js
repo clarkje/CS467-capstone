@@ -18,3 +18,24 @@ function showPDF(){
 myVar = setTimeout(removeSpinner, 6500);
 
 pdf = setTimeout(showPDF, 6000);
+
+//Change the preview image on create award
+document.addEventListener('DOMContentLoaded', function(){
+	var select = document.getElementById("template");
+
+	select.addEventListener('change', function(){
+  		var template = select.options[select.selectedIndex].text;
+
+  		var image = document.getElementById("cert-preview");
+
+  		if (template == "Outstanding"){
+    			image.src="/cert_assets/outstanding.png";
+  		}
+  		else if (template == "Winner"){
+    			image.src="/cert_assets/winner.png";
+  		}
+  		else {
+    			image.src="/cert_assets/congratulations.png";
+  		}
+	});
+});
