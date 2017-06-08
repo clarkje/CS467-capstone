@@ -51,6 +51,17 @@ function handleFormInput($am) {
           $data['error'] = "An error has occurred.  The object could not be retrieved.";
           break;
         }
+
+        if(isset($_POST['email']) && $_POST['email'] != null) {
+          $admin->setEmail($_POST['email']);
+        }
+
+        if(isset($_POST['password']) && $_POST['password'] != null) {
+          $admin->setPassword($_POST['password']);
+        }
+
+        $am->store($admin);
+
         // Populate the data element for the template engine
         $data['admin']['id'] = $admin->getId();
         $data['admin']['email'] = $admin->getEmail();
