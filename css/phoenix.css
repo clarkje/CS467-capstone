@@ -33,7 +33,7 @@
   display: inline-block;
   bottom: 50%;
   animation: shrink 2s ease-in-out;
-  animation-delay: 2s;
+  animation-delay: 4.5s;
 }
 
 @keyframes shrink {
