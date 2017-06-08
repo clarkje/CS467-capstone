@@ -102,7 +102,6 @@ function handleFormInput($um) {
         $user->setFirstName($_POST['firstName']);
         $user->setLastName($_POST['lastName']);
         $user->setEmail($_POST['email']);
-        echo("Setting Password: " . $_POST['password']);
         $user->setPassword($_POST['password']);
         $um->store($user);
 
