@@ -126,20 +126,30 @@ class AwardManager {
 
   /**
   * Returns a count of awards by the user that granted them
+  * @param int GranterID
   * @param DateTime $startDate
   * @param DateTime $endDate
   * @return Array array of regions and counts
   */
-  public function getAwardCountByGranter($startDate = null, $endDate = null, $limit = null) {
+  public function getAwardCountByGranter($granterId = null, $startDate = null, $endDate = null, $limit = null) {
 
     $queryString = "SELECT count(a) AS awardCount, u.firstName, u.lastName
                       FROM Award a
                       JOIN a.granter u
     ";
 
-    if(!empty($startDate) || !empty($endDate)) {
+    if(!empty($startDate) || !empty($endDate) || !empty($granterId)) {
       $queryString .= " WHERE ";
     }
+
+    if (!empty($granterId)) {
+      $queryString .= "u = :granter";
+    }
+
+    if (!empty($granterId) && !empty($startDate)) {
+      $queryString .= " AND ";
+    }
+
 
     if(!empty($startDate)) {
       $queryString .= " a.grantDate > :startDate";
@@ -158,6 +168,10 @@ class AwardManager {
     $query = $this->em->createQuery($queryString);
 
     $params = array();
+    if(!empty($granterId)) {
+      $query->setParameter('granter', $granterId);
+    }
+
     if(!empty($startDate)) {
       $query->setParameter('startDate', $startDate);
     }
@@ -218,7 +232,17 @@ class AwardManager {
     return $result;
   }
 
+  /**
+  * @param int Granter ID
+  * @param array Order By
+  * @param int number of records to return
+  * @param int offset for windowed results
+  * @return array of Awards
+  */
 
+  public function loadAllByGranter($granterId, $orderBy = null, $limit = null, $offset = null) {
+    return $this->em->getRepository('Award')->findBy(array('granter' => $granterId), $orderBy, $limit, $offset);
+  }
 
   /**
   * @return Array of Awards

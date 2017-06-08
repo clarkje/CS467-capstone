@@ -21,20 +21,38 @@ $data = array();  // Output for display by the template engine
 $data['formAction'] = $_SERVER['PHP_SELF'];
 
 // Handle any custom dates that might get set
-if(isset($_GET['startDate'])) {
+if(isset($_GET['startDate']) && $_GET['startDate'] != null) {
   $startDate = DateTime::createFromFormat('m/d/Y', $_GET['startDate']);
   $data['dateRangeStart'] = date_format($startDate, "M d Y");
   $data['startDate'] = date_format($startDate, "m/d/Y");  // it gets validated this way...
 } else {
-  $startDate = null;
+
+  // Bugfix: If the user specifies an end date but no start date, assume 1 year prior
+  // Borrowed from: https://stackoverflow.com/questions/20877325/last-year-this-year-next-year-with-php-datetime
+  if(isset($_GET['endDate']) && $_GET['endDate'] != null) {
+    $startDate = DateTime::createFromFormat('m/d/Y', $_GET['endDate']);
+    $startDate->sub(new DateInterval('P1Y'));
+    $data['dateRangeStart'] = date_format($startDate, "M d Y");
+    $data['startDate'] = date_format($startDate, "m/d/Y");
+  } else {
+    $startDate = null;
+  }
 }
 
-if(isset($_GET['endDate'])) {
+if(isset($_GET['endDate']) && $_GET['endDate'] != null) {
   $endDate = DateTime::createFromFormat('m/d/Y', $_GET['endDate']);
   $data['dateRangeEnd'] = date_format($endDate, "M d Y");
   $data['endDate'] = date_format($endDate, "m/d/Y");
 } else {
-  $endDate = null;
+
+  // Bugfix: If the user specifies a start date, but no end date, assume today.
+  if(isset($_GET['startDate']) && $_GET['startDate'] != null) {
+    $endDate = new DateTime('NOW');
+    $data['dateRangeEnd'] = date_format($endDate, "M d Y");
+    $data['endDate'] = date_format($endDate, "m/d/Y");
+  } else {
+    $endDate = null;
+  }
 }
 
 if(isset($_GET['limit'])) {
@@ -87,7 +105,7 @@ function loadAwardCountByRecipient($awardManager, $startDate = null, $endDate = 
 function buildRecipientGraphData($countArray) {
 
   // Label the graph elements
-  $graphData = "['Granter', 'Awards Granted']";
+  $graphData = "['Recipient', 'Awards Granted']";
 
   // Build the array string
   for($i = 0; $i < sizeof($countArray); $i++) {

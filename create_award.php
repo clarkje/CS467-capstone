@@ -43,13 +43,14 @@ if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true")
   // If we're just coming to the create award page fresh, create a default list of address options from the pulldown
   if(!isset($_POST['action'])) {
     $data['award']['addressOptions'] = createAddressOptions($addressManager);
+    $data['award']['awardType'] = createAwardTypeOptions($awardTypeManager);
   }
 
-  $data['awards'] = loadAllAwards($awardManager, $awardTypeManager, $userManager, array('id'=>'DESC'), $itemsPerPage, $offset);
+  $data['awards'] = loadAllAwards($awardManager, $awardTypeManager, $userManager, $_SESSION['id'], array('id'=>'DESC'), $itemsPerPage, $offset);
   $data['user'] = loadUserData($userManager);
   $data['user_info'] = true;
   $data['page_title'] = 'Create Award';
-  $data['awardType'] = array(array('id'=>"1", 'label'=>"Generic Award"));
+  $data['awardType'] = $awardTypeManager->loadAll();
 
   $countries = $countryManager->loadAll(array('name'=>'ASC'));
   foreach($countries AS $country) {
@@ -60,7 +61,11 @@ if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true")
   $data['page_title'] = 'Log In';
 }
 $data['title'] = 'Project Phoenix - Employee Recognition System';
-$data['pagination'] = createPagination($awardManager->getAwardCount(), $offset, $itemsPerPage);
+
+
+$awardCount = $awardManager->getAwardCountByGranter($_SESSION['id']);
+
+$data['pagination'] = createPagination($awardCount[0]['awardCount'], $offset, $itemsPerPage);
 
 // Pass the resulting data into the template
 echo $tpl->render($data);
@@ -73,9 +78,9 @@ echo $tpl->render($data);
 * @param int $offset - offset of record window
 * @return Array data for display
 */
-function loadAllAwards($awardManager, $awardTypeManager, $userManager, $orderBy = null, $limit = null, $offset = null) {
+function loadAllAwards($awardManager, $awardTypeManager, $userManager, $granterId, $orderBy = null, $limit = null, $offset = null) {
 
-  $loadedAwards = $awardManager->loadAll($orderBy, $limit, $offset);
+  $loadedAwards = $awardManager->loadAllByGranter($granterId, $orderBy, $limit, $offset);
   if(empty($loadedAwards)) {
     return null;
   }
@@ -186,7 +191,6 @@ function handleFormInput($awardManager, $awardTypeManager, $userManager, $addres
         try {
           $awardManager->store($award);
         } catch (Exception $e) {
-          var_dump($e);
           $data['error'] = "An error has occurred.  The operation could not be completed.";
           break;
         }
@@ -223,6 +227,7 @@ function handleFormInput($awardManager, $awardTypeManager, $userManager, $addres
         $address = $award->getRecipientAddress();
         $country = $address->getCountry();
         $data['addressOptions'] = createAddressOptions($addressManager, $address->getId());
+        $data['awardType'] = createAwardTypeOptions($awardTypeManager, $award->getAwardType()->getId());
 
         return $data;
       break;
@@ -286,10 +291,11 @@ function handleFormInput($awardManager, $awardTypeManager, $userManager, $addres
         $data['grantDate'] = $grantDate;
         $data['certURL'] = $award->getCertURL();
         $data['addressOptions'] = createAddressOptions($addressManager, $address->getId());
+        $data['awardType'] = createAwardTypeOptions($awardTypeManager, $award->getAwardType()->getId());
 
         $cg =  new CertGenerator();
         $cg->createCertificate($award);
-        
+
         return $data;
       break;
       case "delete":
@@ -301,6 +307,32 @@ function handleFormInput($awardManager, $awardTypeManager, $userManager, $addres
     }
   }
 }
+
+/**
+* Creates a set of AwardType option elements for display by the template engine
+* @param AwardTypeManager $awardTypeManager
+* @param int $awardTypeID id of the element that appears selected
+* @return string prepared HTML select options for the template engine
+*/
+
+function createAwardTypeOptions($awardTypeManager, $awardTypeId = null) {
+
+  $output = "";
+
+  $awardTypes = $awardTypeManager->loadAll(array('description' => 'ASC'));
+  foreach($awardTypes as $entry) {
+    $output .= "<option value'" . $entry->getId() . "'";
+    if($awardTypeId == $entry->getId()) {
+      $output .= " selected ";
+    }
+    $output .= ">";
+    $output .= $entry->getDescription();
+    $output .= "</option>";
+  }
+
+  return $output;
+}
+
 
 /**
 * Creates a set of address option elements for display by the template engine
@@ -391,29 +423,32 @@ function createPagination($totalRecords, $offset = 1, $itemsPerPage = 25) {
     $pageNumbers[] = array("label"=>"<", "offset"=>$backOffset);
 
 
-    // If the last page is visible, we don't want to advance the left side
-    if (($numPages - $currentPage) < 4) {
-      $firstPage = $currentPage - 7;
-      $lastPage = $numPages;
-    // Otherwise, we try to keep the current page in the middle of the visible list
-    } else {
-      // If the current page is above 4, we need to start moving the window to the right
-      if ($currentPage > 4) {
-        $firstPage = $currentPage - 4;
-        if($numPages > $currentPage + 4) {
-          $lastPage = $currentPage + 4;
-        } else {
-          $firstPage = $numPages - 8;
-          $lastPage = $numPages;
+      // If the last page is visible, we don't want to advance the left side
+      if (($numPages - $currentPage) < 4) {
+        $firstPage = $currentPage - 7;
+        if($firstPage < 1) {
+          $firstPage = 1;
         }
+        $lastPage = $numPages;
+      // Otherwise, we try to keep the current page in the middle of the visible list
       } else {
-        $firstPage = 1;
-        if($numPages < 8) {
-          $lastPage = $numPages;
+        // If the current page is above 4, we need to start moving the window to the right
+        if ($currentPage > 4) {
+          $firstPage = $currentPage - 4;
+          if($numPages > $currentPage + 4) {
+            $lastPage = $currentPage + 4;
+          } else {
+            $firstPage = $numPages - 8;
+            $lastPage = $numPages;
+          }
+        } else {
+          $firstPage = 1;
+          if($numPages < 8) {
+            $lastPage = $numPages;
+          }
+          $lastPage = 9;
         }
-        $lastPage = 9;
       }
-    }
 
     for ($i = $firstPage; $i < $lastPage + 1; $i++) {
 

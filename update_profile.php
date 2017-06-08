@@ -32,6 +32,8 @@ echo $tpl->render($data);
 
 function handleFormInput($um) {
 
+  $data = array();
+
   // Load user data from the session
   try {
     $user = $um->load($_SESSION['id']);
@@ -43,6 +45,7 @@ function handleFormInput($um) {
   $data['email'] = $_SESSION['email'];
   $data['firstName'] = $user->getFirstName();
   $data['lastName'] = $user->getLastName();
+
   if($user->getSignatureURL()) {
     $data['signatureURL'] = $user->getSignatureURL();
   }
