@@ -82,7 +82,7 @@ class CertGenerator {
       				{{" . $award->getGranter()->getFirstName() . " " . $award->getGranter()->getLastName() . "}}
       			\\end{center}
       			\\begin{center}
-      				{Oct 2017}
+      				{{" . $award->getGrantDate()->format('m/d/Y') . "}}
       			\\end{center}
       			\\begin{figure}[h]
       				\\begin{subfigure}
