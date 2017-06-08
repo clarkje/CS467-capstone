@@ -67,6 +67,7 @@ if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true")
   $data['user_info'] = true;
 
   $countArray = loadAwardCountByGranter($am, $startDate, $endDate);
+
   $data['chartDataString'] = buildRegionGraphData($countArray);
 
   // Set the display title of the page
@@ -86,7 +87,9 @@ echo $tpl->render($data);
 * return Array counts by region
 */
 function loadAwardCountByGranter($awardManager, $startDate = null, $endDate = null) {
-  $awardCountArray = $awardManager->getAwardCountByGranter($startDate, $endDate);
+
+  $awardCountArray = $awardManager->getAwardCountByGranter(null, $startDate, $endDate);
+
   if(empty($awardCountArray)) {
     return null;
   }
