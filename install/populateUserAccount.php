@@ -1,6 +1,6 @@
 <?php
 
-// Populates a list of Award Types
+// Populates a bunch of awards for a specific user
 //
 // NOTE: This is a destructive operation.
 // It will screw up any associated indices.
@@ -541,18 +541,9 @@ echo "This will take a minute. \n";
 
 $awardTypes = $awardTypeManager->loadAll();
 $addresses = $addressManager->loadAll();
-$users = $userManager->loadAll();
+$users = $userManager->loadByEmail('demo@phoenix.jeromie.com');
 
-// Everyone gets a trophy
-echo("Generating Slines:\n");
-foreach($grantees as $granteeData) {
-  $award = buildAward($addresses, $awardTypes, $granteeData, $users);
-  echo(".");
-  $awardManager->store($award);
-}
-
-echo("\nGenerating Overachievers: \n");
-for ($i = 0; $i < 200; $i++) {
+for ($i = 0; $i < 100; $i++) {
   $granteeData = $grantees[rand(0,sizeof($grantees) * 0.1)];
   $award = buildAward($addresses, $awardTypes, $granteeData, $users);
   echo(".");
@@ -584,7 +575,7 @@ function buildAward($addresses, $awardTypes, $granteeData, $users) {
   $award->setRecipientAddress($addresses[$index]);
 
   // Set a random granter
-  $award->setGranter($users[mt_rand(0, sizeof($users) - 1)]);
+  $award->setGranter($users[0]);
 
   $award->setRecipientFirst($granteeData['firstName']);
   $award->setRecipientLast($granteeData['lastName']);
