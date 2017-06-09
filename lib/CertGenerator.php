@@ -52,6 +52,20 @@ class CertGenerator {
   // Mustaches and TeX both use curly braces, so we're doing this the ugly way.
   private function generateTexOutput(Award $award) {
 
+    //determine template type for award text
+    $type = $award->getAwardType();
+    $description = $type->getDescription();
+
+    if ($description == "Outstanding"){
+      $awardText = "You Are Awesome";
+    }
+    else if ($description == "Winner"){
+      $awardText = "Employee Of The Month";
+    }
+    else {
+      $awardText = "Top Corporate Achiever";
+    }
+
     $text = "\documentclass[12pt]{article}
 
       	% Packages
@@ -68,7 +82,7 @@ class CertGenerator {
       	\TileWallPaper{1\paperwidth}{1\paperheight}{{" . $GLOBALS['DOCUMENT_ROOT'] . "/cert_assets/outstanding.png}}
       	\begin{center}
       		\\vspace*{80mm}
-      	 		{\\fontfamily{qbk}\selectfont\Huge {" . "You are Awesome" . "}}
+      	 		{\\fontfamily{qbk}\selectfont\Huge {" . $awardText . "}}
       	 		\\begin{center}
       	 			{awarded to}
       	 		\\end{center}
