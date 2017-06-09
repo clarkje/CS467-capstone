@@ -47,8 +47,10 @@ if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true")
   }
 
   // If we're just coming to the create award page fresh, create a default list of address options from the pulldown
-  if(!isset($_POST['action'])) {
+  if(!isset($data['award']['addressOptions']) {
     $data['award']['addressOptions'] = createAddressOptions($addressManager);
+  }
+  if(!isset($data['award']['awardType']) { 
     $data['award']['awardType'] = createAwardTypeOptions($awardTypeManager);
   }
   $data['awards'] = loadAllAwards($awardManager, $awardTypeManager, $userManager, $_SESSION['id'], array('grantDate'=>'DESC'), $itemsPerPage, $offset);
