@@ -16,7 +16,7 @@
 {{#award.error}}
 <!-- Something bad happened -->
 <div class="alert alert-danger">
-  {{error}}
+  {{award.error}}
 </div>
 {{/award.error}}
 
@@ -62,11 +62,40 @@
 
     <hr>
     <div class="form-group">
+
       <button type="submit" class="btn btn-default" >{{^award.id}}Create{{/award.id}}{{#award.id}}Update{{/award.id}} Award</button>
-      {{#admin.id}}<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmModal">Delete Award</button>{{/admin.id}}
       {{#award.certURL}}<a class="btn btn-info" href="/view_award.php?view={{award.id}}" target="blank">View Award Details</a>{{/award.certURL}}
       {{#award.id}}<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmModal">Delete Award</button>{{/award.id}}
     </div>
+
+
+  {{^hasSignature}}
+  <script>
+    // Show this modal immediately if the user doesn't have a signature set.
+    $(window).on('load',function(){
+        $('#noSignatureModal').modal('show');
+    });
+    </script>
+  {{/hasSignature}}
+  <!-- Modal Confirmation Dialog -->
+  <!-- from bootstrap documentation, here: http://getbootstrap.com/javascript/#modals -->
+  <div class="modal fade" id="noSignatureModal" tabindex="-1" role="dialog" aria-labelledby="noSignatureModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="confirmModalLabel">You must be new here!</h4>
+        </div>
+        <div class="modal-body">
+          <h4>Before You Start: Add A Signature To Your Profile</h4>
+          <p>It looks like you haven't set up a signature in your profile yet, so any award certificates you create will not be signed.</p>
+          <a href="/update_profile.php">Add a signature to your profile</a>, or hit Close to continue creating an unsigned certificate.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </form>
 </div>
 <div class="col-lg-5">
@@ -75,7 +104,6 @@
 </div>
 
 <hr>
-
 <!-- Modal Confirmation Dialog -->
 <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel">
   <div class="modal-dialog" role="document">

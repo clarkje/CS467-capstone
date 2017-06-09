@@ -23,8 +23,12 @@ $offset = null;
 $itemsPerPage = 15 ;
 
 if (isset($_GET['orderBy'])) {
-  $orderBy = $_GET['orderBy'];
+  // TODO: Add sortable column support to UI
+  // $orderBy = $_GET['orderBy'];
+} else {
+  $orderBy = array('grantDate' => 'DESC');
 }
+
 if (isset($_GET['offset'])) {
   $offset = $_GET['offset'];
 }
@@ -33,7 +37,7 @@ if (isset($_GET['offset'])) {
 if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true") {
   $data['awards'] = loadAllAwards($am, $um, $orderBy, $itemsPerPage, $offset);
   $data['user_info'] = true;
-  $data['page_title'] = 'View Award';
+  $data['page_title'] = 'View All Awards';
   $data['awardType'] = array(array('id'=>"1", 'label'=>"Generic Award"));
 
   if(isset($_GET['view'])) {
