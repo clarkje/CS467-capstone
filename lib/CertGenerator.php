@@ -48,7 +48,7 @@ class CertGenerator {
       system($command);
     }
   }
-  
+
   // Mustaches and TeX both use curly braces, so we're doing this the ugly way.
   private function generateTexOutput(Award $award) {
 
@@ -65,7 +65,7 @@ class CertGenerator {
       \begin{document}
       	\linespread{2}\selectfont
       	\pagestyle{empty}
-      	\TileWallPaper{1\paperwidth}{1\paperheight}{{" . $GLOBALS['DOCUMENT_ROOT'] . "/cert_assets/outstanding.png}}
+      	\TileWallPaper{1\paperwidth}{1\paperheight}{{" . $GLOBALS['DOCUMENT_ROOT'] . "/cert_assets/" . $award->getAwardType()->getTemplateFile()}}
       	\begin{center}
       		\\vspace*{80mm}
       	 		{\\fontfamily{qbk}\selectfont\Huge {" . "You are Awesome" . "}}
