@@ -16,17 +16,17 @@
     <div id="addressForm" class="collapse">
 
       <div class="form-group">
-        <label>Address Description</label>
+        <label>* Address Description (* = required)</label>
         <input class="form-control" name="address_description" value="{{address.description}}">
       </div>
 
       <div class="form-group">
-        <label>Address 1</label>
+        <label>* Address 1</label>
         <input class="form-control" name="address_address1" value="{{address.address1}}">
       </div>
 
       <div class="form-group">
-        <label>Address 2</label>
+        <label>* Address 2</label>
         <input class="form-control" name="address_address2" value="{{address.address2}}">
       </div>
 
@@ -36,7 +36,7 @@
       </div>
 
       <div class="form-group">
-        <label>City</label>
+        <label>* City</label>
         <input class="form-control" name="address_city" value="{{address.city}}">
       </div>
 
@@ -46,12 +46,12 @@
       </div>
 
       <div class="form-group">
-        <label>Zipcode</label>
+        <label>* Zipcode/Postal Code</label>
         <input class="form-control" name="address_zipcode" value="{{address.zipcode}}">
       </div>
 
       <div class="form-group">
-        <label>Country</label>
+        <label>* Country</label>
         <select class="form-control" name="address_country">
           {{#countries}}
             <option value="{{id}}">{{name}}</option>
