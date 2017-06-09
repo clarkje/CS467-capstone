@@ -113,8 +113,8 @@ class CertGenerator {
 
     $mail = new PHPMailer;
     $mail->isSendmail();
-    $mail->setFrom('noreply@jeromie.com', 'Award Notification');
-    $mail->addReplyTo('noreply@jeromie.com', 'Award Notification');
+    $mail->setFrom('noreply@phoenix.jeromie.com', 'Award Notification');
+    $mail->addReplyTo('noreply@phoenix.jeromie.com', 'Award Notification');
 
     $recipientName = $award->getRecipientFirst() . " " . $award->getRecipientLast();
 
@@ -123,7 +123,7 @@ class CertGenerator {
     // $mail->addAttachment($award->getCertPath() . ".pdf");
     $mail->isHTML(true);
 
-    $mail->Subject = "Congratulations! You've received an award.";
+    $mail->Subject = "An award has been issued to you";
     $body = "Dear " . $award->getRecipientFirst() . " " . $award->getRecipientLast() . "<br>";
     $body .= "<p>You have received an award from " . $award->getGranter()->getFirstName() . " " . $award->getGranter()->getLastName() . "</p>";
     $body .= "<p>We here at GloboCorp value your <i>Important Contribution</i>.  Please print the attached PDF and display it proudly as evidence of your worth as a human.</p>";
