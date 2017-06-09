@@ -65,6 +65,10 @@ function handleFormInput($um) {
         $user->setLastName($_POST['lastName']);
         $user->setEmail($_POST['email']);
 
+        if(isset($_POST['password']) && $_POST['password'] != null) {
+          $admin->setPassword($_POST['password']);
+        }
+
         $um->store($user);
         if($user->getSignatureURL()) {
           $data['signatureURL'] = $user->getSignatureURL();
