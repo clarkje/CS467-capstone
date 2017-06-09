@@ -35,13 +35,13 @@ document.addEventListener('DOMContentLoaded', function(){
   		var image = document.getElementById("cert-preview");
 
   		if (template == "Outstanding"){
-    			image.src="/cert_assets/outstanding.png";
+    			image.src="/cert_assets/outstanding_sample.png";
   		}
   		else if (template == "Winner"){
-    			image.src="/cert_assets/winner.png";
+    			image.src="/cert_assets/winner_sample.png";
   		}
   		else {
-    			image.src="/cert_assets/congratulations.png";
+    			image.src="/cert_assets/congratulations_sample.png";
   		}
 	});
 });
