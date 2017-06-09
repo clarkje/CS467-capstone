@@ -34,19 +34,16 @@ class CertGenerator {
       }
     }
 
-    if(!$award->hasCert()) {
+    $basePath = $GLOBALS['STATIC_ROOT'] . $GLOBALS['CERT_PATH'];
+    $texFilePath = $basePath . $award->getCertPath() . ".tex";
 
-      $basePath = $GLOBALS['STATIC_ROOT'] . $GLOBALS['CERT_PATH'];
-      $texFilePath = $basePath . $award->getCertPath() . ".tex";
+    // Unfortunate workaround for the lack of an outputFile parameter...
+    $outputDirectory = $basePath;
+    $outputDirectory .= substr($award->getCertPath(), 0, 3);
 
-      // Unfortunate workaround for the lack of an outputFile parameter...
-      $outputDirectory = $basePath;
-      $outputDirectory .= substr($award->getCertPath(), 0, 3);
-
-      // Backgrounding Latex generation at shell borrowed from: https://segment.com/blog/how-to-make-async-requests-in-php/
-      $command = $GLOBALS['PDFLATEX_PATH'] . " --interaction=nonstopmode --output-directory=" . $outputDirectory . " " . $texFilePath . " > /dev/null 2>&1 &";
-      system($command);
-    }
+    // Backgrounding Latex generation at shell borrowed from: https://segment.com/blog/how-to-make-async-requests-in-php/
+    $command = $GLOBALS['PDFLATEX_PATH'] . " --interaction=nonstopmode --output-directory=" . $outputDirectory . " " . $texFilePath . " > /dev/null 2>&1 &";
+    system($command);
   }
 
   // Mustaches and TeX both use curly braces, so we're doing this the ugly way.
