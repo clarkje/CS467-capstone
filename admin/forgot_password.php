@@ -71,8 +71,6 @@ if(isset($_REQUEST['action'])) {
       $subject = "Password Reset for Project Phoenix";
       $message = "An attempt has been made to reset your password." . "\r\n"
                 . "To reset your password, click this link:" . $resetLink . "\r\n"
-                . $admin->getResetHash()
-                . "&email=" . $admin->getEmail() . "\r\n"
                 . "This reset link will expire in "
                 . ($GLOBALS['PASSWORD_RESET_TIMEOUT']/60) . " minutes.\r\n";
 
