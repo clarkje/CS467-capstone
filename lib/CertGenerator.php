@@ -13,25 +13,23 @@ class CertGenerator {
 
     // Generate TeX File and save it to the filesystem
     // This operation is fast, so we just do it in realtime.
-    if(!$award->hasTex()) {
 
-      $output = $this->generateTexOutput($award);
+    $output = $this->generateTexOutput($award);
 
-      if(empty($output)) {
-        // TODO: Throw an exception
-          echo("CertGenerator::createCertificate - Generating TeX File Failed");
-          return false;
-      }
-
-      $basePath = $GLOBALS['STATIC_ROOT'] . $GLOBALS['CERT_PATH'];
-      $filePath = $basePath . $award->getCertPath() . ".tex";
-
-      // Create the file if it does not exist, otherwise truncate and overwrite
-      $fh = fopen($filePath, "w+");
-      if(!fwrite($fh, $output)) {
-        echo("CertGenerator::createCertificate - Writing TeX File Failed");
+    if(empty($output)) {
+      // TODO: Throw an exception
+        echo("CertGenerator::createCertificate - Generating TeX File Failed");
         return false;
-      }
+    }
+
+    $basePath = $GLOBALS['STATIC_ROOT'] . $GLOBALS['CERT_PATH'];
+    $filePath = $basePath . $award->getCertPath() . ".tex";
+
+    // Create the file if it does not exist, otherwise truncate and overwrite
+    $fh = fopen($filePath, "w+");
+    if(!fwrite($fh, $output)) {
+      echo("CertGenerator::createCertificate - Writing TeX File Failed");
+      return false;
     }
 
     $basePath = $GLOBALS['STATIC_ROOT'] . $GLOBALS['CERT_PATH'];
