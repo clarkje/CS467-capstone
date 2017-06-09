@@ -7,7 +7,7 @@ function removeSpinner(){
   }
 
   //change pdf position relative to ensure page layout does not chagne
-  var pdf = document.getElementById(certificate);
+  var pdf = document.getElementById("certificate");
   if (pdf) {
     certificate.style.position = "relative";
   }

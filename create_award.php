@@ -40,12 +40,17 @@ if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true")
 
   $data['award'] = handleFormInput($awardManager, $awardTypeManager, $userManager, $addressManager, $countryManager);
 
+  // Let the template know that this user has a signature configured
+  $user = $userManager->load($_SESSION['id']);
+  if($user->getSignaturePath() != null) {
+    $data['hasSignature'] = true;
+  }
+
   // If we're just coming to the create award page fresh, create a default list of address options from the pulldown
   if(!isset($_POST['action'])) {
     $data['award']['addressOptions'] = createAddressOptions($addressManager);
     $data['award']['awardType'] = createAwardTypeOptions($awardTypeManager);
   }
-
   $data['awards'] = loadAllAwards($awardManager, $awardTypeManager, $userManager, $_SESSION['id'], array('grantDate'=>'DESC'), $itemsPerPage, $offset);
   $data['user'] = loadUserData($userManager);
   $data['user_info'] = true;
@@ -56,6 +61,17 @@ if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true")
   foreach($countries AS $country) {
     $data['countries'][] = array("name"=>$country->getName(), "id"=>$country->getId());
   }
+  $awardCount = $awardManager->getAwardCountByGranter($_SESSION['id']);
+  $data['pagination'] = createPagination($awardCount[0]['awardCount'], $offset, $itemsPerPage);
+
+  // If an existing operation hasn't already populated the address and award type options, do that now...
+  if(!isset($data['award']['addressOptions'])) {
+    $data['addressOptions'] = createAddressOptions($addressManager);
+  }
+
+  if(!isset($data['award']['awardType'])) {
+    $data['awardType'] = createAwardTypeOptions($awardTypeManager);
+  }
 
 } else {
   $data['page_title'] = 'Log In';
@@ -63,9 +79,6 @@ if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true")
 $data['title'] = 'Project Phoenix - Employee Recognition System';
 
 
-$awardCount = $awardManager->getAwardCountByGranter($_SESSION['id']);
-
-$data['pagination'] = createPagination($awardCount[0]['awardCount'], $offset, $itemsPerPage);
 
 // Pass the resulting data into the template
 echo $tpl->render($data);
@@ -183,16 +196,37 @@ function handleFormInput($awardManager, $awardTypeManager, $userManager, $addres
         $award->setRecipientFirst($_POST['recipientFirst']);
         $award->setRecipientLast($_POST['recipientLast']);
         $award->setRecipientEmail($_POST['recipientEmail']);
+
+        // Get the relevant AwardType object
         $awardType = $awardTypeManager->load($_POST['awardType']);
         $award->setAwardType($awardType);
         $award->setGranter($user);
         $award->setGrantDate(new DateTime($_POST['grantDate']));
 
-        try {
-          $awardManager->store($award);
-        } catch (Exception $e) {
-          $data['error'] = "An error has occurred.  The operation could not be completed.";
-          break;
+
+        // Handle the case where both address ID and any of the required address fields are null.
+        // We'll throw an error and try to keep the form populated
+        $badAddress = false;
+        if(isset($_POST['address_id']) && $_POST['address_id'] == "") {
+          if ((!isset($_POST['address_description']) || $_POST['address_description'] = "") ||
+              (!isset($_POST['address_address1']) || $_POST['address_address1'] = "") ||
+              (!isset($_POST['address_address2']) || $_POST['address_address2'] = "") ||
+              (!isset($_POST['address_city']) || $_POST['address_city'] = "") ||
+              (!isset($_POST['address_zipcode']) || $_POST['address_zipcode'] = "") ||
+              (!isset($_POST['address_country']) || $_POST['address_country'] = ""))
+              {
+                  $data['error'] = "You must either choose an existing address or specify a new one.";
+                  $badAddress = true;
+              }
+        }
+
+        if($badAddress = false) {
+          try {
+            $awardManager->store($award);
+          } catch (Exception $e) {
+            $data['error'] = "An error has occurred.  The operation could not be completed.";
+            break;
+          }
         }
 
         $data['added'] = true;
@@ -203,6 +237,8 @@ function handleFormInput($awardManager, $awardTypeManager, $userManager, $addres
 
         $grantDate = $award->getGrantDate()->format('m/d/Y');
         $data['grantDate'] = $grantDate;
+        $data['addressOptions'] = createAddressOptions($addressManager, $address->getId());
+        $data['awardType'] = createAwardTypeOptions($awardTypeManager, $award->getAwardType()->getId());
 
         // Fire off the cerificate creation process
         $cg =  new CertGenerator();
@@ -300,9 +336,19 @@ function handleFormInput($awardManager, $awardTypeManager, $userManager, $addres
       break;
       case "delete":
         $award = $awardManager->load($_POST['id']);
-        $awardManager->delete($award);
-        $data['deleted'] = true;
-        return $data;
+        if($award) {
+          try {
+             $awardManager->delete($award);
+           } catch (Exception $e) {
+             $data['error'] = "Delete Failed.";
+             return $data;
+           }
+           $data['deleted'] = true;
+           return $data;
+        } else {
+          $data['error'] = "Delete Failed.  Specified award does not exist.";
+          return $data;
+        }
       break;
     }
   }
@@ -316,12 +362,11 @@ function handleFormInput($awardManager, $awardTypeManager, $userManager, $addres
 */
 
 function createAwardTypeOptions($awardTypeManager, $awardTypeId = null) {
-
   $output = "";
 
   $awardTypes = $awardTypeManager->loadAll(array('description' => 'ASC'));
   foreach($awardTypes as $entry) {
-    $output .= "<option value'" . $entry->getId() . "'";
+    $output .= "<option value='" . $entry->getId() . "'";
     if($awardTypeId == $entry->getId()) {
       $output .= " selected ";
     }
