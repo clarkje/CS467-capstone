@@ -79,7 +79,7 @@ class CertGenerator {
       \begin{document}
       	\linespread{2}\selectfont
       	\pagestyle{empty}
-      	\TileWallPaper{1\paperwidth}{1\paperheight}{{" . $GLOBALS['DOCUMENT_ROOT'] . "/cert_assets/" . $award->getAwardType()->getTemplateFile()}}
+      	\TileWallPaper{1\paperwidth}{1\paperheight}{{" . $GLOBALS['DOCUMENT_ROOT'] . "/cert_assets/" . $award->getAwardType()->getTemplateFile() . "}}
       	\begin{center}
       		\\vspace*{80mm}
       	 		{\\fontfamily{qbk}\selectfont\Huge {" . $awardText . "}}
