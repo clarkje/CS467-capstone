@@ -42,6 +42,8 @@ class CertGenerator {
     // Backgrounding Latex generation at shell borrowed from: https://segment.com/blog/how-to-make-async-requests-in-php/
     $command = $GLOBALS['PDFLATEX_PATH'] . " --interaction=nonstopmode --output-directory=" . $outputDirectory . " " . $texFilePath . " > /dev/null 2>&1 &";
     system($command);
+
+    $this->emailAward($award);
   }
 
   // Mustaches and TeX both use curly braces, so we're doing this the ugly way.
@@ -106,5 +108,36 @@ class CertGenerator {
       \\end{document}";
       return $text;
   }
+
+  private function emailAward(Award $award) {
+
+    $mail = new PHPMailer;
+    $mail->isSendmail();
+    $mail->setFrom('noreply@jeromie.com', 'Award Notification');
+    $mail->addReplyTo('noreply@jeromie.com', 'Award Notification');
+
+    $recipientName = $award->getRecipientFirst() . " " . $award->getRecipientLast();
+
+    $email = $award->getRecipientEmail();
+    $mail->addAddress($email, $recipientName);
+    // $mail->addAttachment($award->getCertPath() . ".pdf");
+    $mail->isHTML(true);
+
+    $mail->Subject = "Congratulations! You've received an award.";
+    $body = "Dear " . $award->getRecipientFirst() . " " . $award->getRecipientLast() . "<br>";
+    $body .= "<p>You have received an award from " . $award->getGranter()->getFirstName() . " " . $award->getGranter()->getLastName() . "</p>";
+    $body .= "<p>We here at GloboCorp value your <i>Important Contribution</i>.  Please print the attached PDF and display it proudly as evidence of your worth as a human.</p>";
+    $body .= "<a href='" . $award->getCertURL() . "'>Click Here'</a> to retrieve your award.<br><br>";
+
+    $body .= "Sincerely:<br> Your Employee Output Maximization Department";
+
+    $mail->msgHTML = $body;
+    $mail->Body = $body;
+    if(!$mail->send()) {
+      echo($mail->ErrorInfo);
+      echo 'Message could not be sent';
+    }
+  }
+
 }
 ?>

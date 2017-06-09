@@ -1,4 +1,5 @@
 .DS_STORE
+components/
 config
 config/*
 config/config.php

@@ -50,7 +50,7 @@ if( array_key_exists('logged_in',$_SESSION) && $_SESSION['logged_in'] == "true")
   if(!isset($data['award']['addressOptions'])) {
     $data['award']['addressOptions'] = createAddressOptions($addressManager);
   }
-  if(!isset($data['award']['awardType']) {
+  if(!isset($data['award']['awardType'])) {
     $data['award']['awardType'] = createAwardTypeOptions($awardTypeManager);
   }
   $data['awards'] = loadAllAwards($awardManager, $awardTypeManager, $userManager, $_SESSION['id'], array('grantDate'=>'DESC'), $itemsPerPage, $offset);
