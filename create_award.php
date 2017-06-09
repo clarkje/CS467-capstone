@@ -208,28 +208,28 @@ function handleFormInput($awardManager, $awardTypeManager, $userManager, $addres
         // We'll throw an error and try to keep the form populated
         $badAddress = false;
         if(isset($_POST['address_id']) && $_POST['address_id'] == "") {
-          if ((!isset($_POST['address_description']) || $_POST['address_description'] = "") ||
-              (!isset($_POST['address_address1']) || $_POST['address_address1'] = "") ||
-              (!isset($_POST['address_address2']) || $_POST['address_address2'] = "") ||
-              (!isset($_POST['address_city']) || $_POST['address_city'] = "") ||
-              (!isset($_POST['address_zipcode']) || $_POST['address_zipcode'] = "") ||
-              (!isset($_POST['address_country']) || $_POST['address_country'] = ""))
+          if ((!isset($_POST['address_description']) || $_POST['address_description'] == "") ||
+              (!isset($_POST['address_address1']) || $_POST['address_address1'] == "") ||
+              (!isset($_POST['address_address2']) || $_POST['address_address2'] == "") ||
+              (!isset($_POST['address_city']) || $_POST['address_city'] == "") ||
+              (!isset($_POST['address_zipcode']) || $_POST['address_zipcode'] == "") ||
+              (!isset($_POST['address_country']) || $_POST['address_country'] == ""))
               {
                   $data['error'] = "You must either choose an existing address or specify a new one.";
                   $badAddress = true;
               }
         }
 
-        if($badAddress = false) {
+        if($badAddress == false) {
           try {
             $awardManager->store($award);
           } catch (Exception $e) {
             $data['error'] = "An error has occurred.  The operation could not be completed.";
             break;
           }
+          $data['added'] = true;
         }
 
-        $data['added'] = true;
         $data['id'] = $award->getId();
         $data['recipientEmail'] = $award->getRecipientEmail();
         $data['recipientFirst'] = $award->getRecipientFirst();
