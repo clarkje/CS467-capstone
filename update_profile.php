@@ -66,7 +66,7 @@ function handleFormInput($um) {
         $user->setEmail($_POST['email']);
 
         if(isset($_POST['password']) && $_POST['password'] != null) {
-          $admin->setPassword($_POST['password']);
+          $user->setPassword($_POST['password']);
         }
 
         $um->store($user);
