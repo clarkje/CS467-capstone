@@ -265,10 +265,6 @@ function handleFormInput($awardManager, $awardTypeManager, $userManager, $addres
         $data['addressOptions'] = createAddressOptions($addressManager, $address->getId());
         $data['awardType'] = createAwardTypeOptions($awardTypeManager, $award->getAwardType()->getId());
 
-        // Fire off the cerificate creation process
-        $cg =  new CertGenerator();
-        $cg->createCertificate($award);
-
         return $data;
       break;
       case "doUpdate":
