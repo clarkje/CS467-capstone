@@ -127,7 +127,7 @@ class CertGenerator {
     $body = "Dear " . $award->getRecipientFirst() . " " . $award->getRecipientLast() . "<br>";
     $body .= "<p>You have received an award from " . $award->getGranter()->getFirstName() . " " . $award->getGranter()->getLastName() . "</p>";
     $body .= "<p>We here at GloboCorp value your <i>Important Contribution</i>.  Please print the attached PDF and display it proudly as evidence of your worth as a human.</p>";
-    $body .= "<a href='" . $award->getCertURL() . "'>Click Here'</a> to retrieve your award.<br><br>";
+    $body .= "<a href='" . $award->getCertURL() . "'>Click Here</a> to retrieve your award.<br><br>";
 
     $body .= "Sincerely:<br> Your Employee Output Maximization Department";
 
